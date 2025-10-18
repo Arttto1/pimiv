@@ -1,0 +1,711 @@
+@page "/"
+@using KanbanWeb.Services
+@using KanbanWeb.Models
+@inject ApiService ApiService
+@inject AuthService AuthService
+@inject SessionService SessionService
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+@if (!AuthService.IsAuthenticated)
+{
+    <div class="login-container">
+        <div class="login-box">
+            <h1 class="login-title">KANBAN</h1>
+            
+            <div class="auth-toggle">
+                <button @onclick="() => isRegisterMode = false" 
+                        class="@(isRegisterMode ? "toggle-btn" : "toggle-btn active")">
+                    LOGIN
+                </button>
+                <button @onclick="() => isRegisterMode = true" 
+                        class="@(isRegisterMode ? "toggle-btn active" : "toggle-btn")">
+                    CADASTRAR
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label>Usuário</label>
+                <input type="text" @bind="username" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" @bind="password" class="form-input" />
+            </div>
+
+            @if (isRegisterMode)
+            {
+                <div class="form-group">
+                    <label>Confirmar Senha</label>
+                    <input type="password" @bind="confirmPassword" class="form-input" />
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="error-message">@errorMessage</div>
+            }
+
+            @if (!string.IsNullOrEmpty(successMessage))
+            {
+                <div class="success-message">@successMessage</div>
+            }
+
+            @if (isRegisterMode)
+            {
+                <button @onclick="Register" class="btn-primary">CADASTRAR</button>
+            }
+            else
+            {
+                <button @onclick="Login" class="btn-primary">ENTRAR</button>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="kanban-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="header-title">KANBAN BOARD</h1>
+                    <span class="username">Olá, @AuthService.Username</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button @onclick="Logout" class="btn-logout">SAIR</button>
+                    <button @onclick="ShowAddColumnModal" class="btn-primary">+ NOVA COLUNA</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="board-container">
+            <div class="columns-wrapper">
+                @foreach (var column in columns)
+                {
+                    <div class="column" style="border-color: @GetColorCode(column.Color)">
+                        <div class="column-header" style="background-color: @GetColorCode(column.Color)">
+                            <span class="column-name">@column.Name</span>
+                            @if (column.IsDeletable)
+                            {
+                                <button @onclick="() => DeleteColumn(column.Id)" class="btn-delete">X</button>
+                            }
+                        </div>
+                        
+                        <div class="cards-container" 
+                             @ondrop="@((e) => HandleDrop(column.Id))"
+                             @ondrop:preventDefault="true"
+                             @ondragover="@((e) => HandleDragOver())"
+                             @ondragover:preventDefault="true"
+                             @ondragenter:preventDefault="true">
+                            @foreach (var card in cards.Where(c => c.ColumnId == column.Id))
+                            {
+                                <div class="card" 
+                                     draggable="true"
+                                     @ondragstart="@(() => HandleCardDragStart(card))"
+                                     @onclick="() => ShowCardDetails(card)">
+                                    <div class="card-title">@card.Title</div>
+                                    @if (!string.IsNullOrEmpty(card.Description))
+                                    {
+                                        <div class="card-description">@card.Description</div>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <button @onclick="() => ShowAddCardModal(column.Id)" class="btn-add-card">+ Novo Card</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (showAddColumnModal)
+    {
+        <div class="modal-overlay" @onclick="CloseModals">
+            <div class="modal-content" @onclick:stopPropagation="true">
+                <h2>Nova Coluna</h2>
+                
+                <div class="form-group">
+                    <label>Nome da Coluna</label>
+                    <input type="text" @bind="newColumnName" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                    <label>Cor da Coluna</label>
+                    <select @bind="newColumnColor" class="form-input">
+                        <option value="red">Vermelho</option>
+                        <option value="green">Verde</option>
+                        <option value="blue">Azul</option>
+                        <option value="yellow">Amarelo</option>
+                        <option value="orange">Laranja</option>
+                        <option value="pink">Rosa</option>
+                        <option value="brown">Marrom</option>
+                        <option value="black">Preto</option>
+                        <option value="white">Branco</option>
+                        <option value="gray">Cinza</option>
+                    </select>
+                </div>
+
+                <div class="modal-buttons">
+                    <button @onclick="CloseModals" class="btn-secondary">CANCELAR</button>
+                    <button @onclick="CreateColumn" class="btn-primary">CRIAR</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (showAddCardModal)
+    {
+        <div class="modal-overlay" @onclick="CloseModals">
+            <div class="modal-content" @onclick:stopPropagation="true">
+                <h2>Novo Card</h2>
+                
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" @bind="newCardTitle" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <div class="textarea-with-ai">
+                        <textarea @bind="newCardDescription" class="form-textarea" rows="5"></textarea>
+                        <button @onclick="RewriteNewCardDescription" class="btn-ai-icon" disabled="@isRewritingNew" title="Reescrever com IA">
+                            @if (isRewritingNew)
+                            {
+                                <span>⏳</span>
+                            }
+                            else
+                            {
+                                <span>✨</span>
+                            }
+                        </button>
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button @onclick="CloseModals" class="btn-secondary">CANCELAR</button>
+                    <button @onclick="CreateCard" class="btn-primary">CRIAR</button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (showCardDetailsModal && selectedCard != null)
+    {
+        <div class="modal-overlay" @onclick="CloseModals">
+            <div class="modal-content" @onclick:stopPropagation="true">
+                <h2>Detalhes do Card</h2>
+                
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" @bind="editCardTitle" class="form-input" />
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <div class="textarea-with-ai">
+                        <textarea @bind="editCardDescription" class="form-textarea" rows="6"></textarea>
+                        <button @onclick="RewriteDescription" class="btn-ai-icon" disabled="@isRewriting" title="Reescrever com IA">
+                            @if (isRewriting)
+                            {
+                                <span>⏳</span>
+                            }
+                            else
+                            {
+                                <span>✨</span>
+                            }
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mover para coluna</label>
+                    <select @bind="editCardColumnId" class="form-input">
+                        @foreach (var col in columns)
+                        {
+                            <option value="@col.Id">@col.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="modal-buttons">
+                    <button @onclick="DeleteCard" class="btn-danger">EXCLUIR</button>
+                    <button @onclick="CloseModals" class="btn-secondary">CANCELAR</button>
+                    <button @onclick="SaveCard" class="btn-primary">SALVAR</button>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private string username = "";
+    private string password = "";
+    private string confirmPassword = "";
+    private string errorMessage = "";
+    private string successMessage = "";
+    private bool isRegisterMode = false;
+
+    private List<Column> columns = new();
+    private List<Card> cards = new();
+
+    private bool showAddColumnModal = false;
+    private string newColumnName = "";
+    private string newColumnColor = "green";
+
+    private bool showAddCardModal = false;
+    private Guid selectedColumnId;
+    private string newCardTitle = "";
+    private string newCardDescription = "";
+    private bool isRewritingNew = false;
+
+    private bool showCardDetailsModal = false;
+    private Card? selectedCard;
+    private string editCardTitle = "";
+    private string editCardDescription = "";
+    private Guid editCardColumnId;
+    private bool isRewriting = false;
+
+    private Card? draggedCard;
+
+    // Move session load to OnAfterRenderAsync so JS interop (localStorage) is available
+    private bool _sessionLoaded = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _sessionLoaded)
+            return;
+
+        _sessionLoaded = true;
+
+        // Tentar carregar sessão salva (usa JS interop, portanto só funciona após render)
+        var (userId, savedUsername, isAdmin) = await SessionService.LoadSessionAsync();
+
+        if (userId.HasValue && !string.IsNullOrEmpty(savedUsername))
+        {
+            // Sessão válida encontrada - auto login
+            AuthService.Login(userId.Value, savedUsername, isAdmin);
+            Console.WriteLine($"[HOME] 🔓 Login automático: {savedUsername} (Admin: {isAdmin})");
+
+            // Redirecionar não-admin para página de tickets
+            if (!isAdmin)
+            {
+                Navigation.NavigateTo("/tickets");
+                return;
+            }
+        }
+
+        if (AuthService.IsAuthenticated && AuthService.IsAdmin)
+        {
+            await LoadData();
+            StateHasChanged();
+        }
+    }
+
+    private async Task Login()
+    {
+        errorMessage = "";
+        successMessage = "";
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "Preencha todos os campos";
+            return;
+        }
+
+        Console.WriteLine($"[LOGIN] Tentando login: {username}");
+
+        var response = await ApiService.LoginAsync(username, password);
+
+        if (response == null)
+        {
+            errorMessage = "Usuário ou senha inválidos";
+            Console.WriteLine("[LOGIN] Falha no login");
+            return;
+        }
+
+        AuthService.Login(response.UserId, response.Username, response.IsAdmin);
+        
+        // Salvar sessão para auto-login futuro
+        await SessionService.SaveSessionAsync(response.UserId, response.Username, response.IsAdmin);
+        
+        // Redirecionar não-admin para página de tickets
+        if (!response.IsAdmin)
+        {
+            Navigation.NavigateTo("/tickets");
+            return;
+        }
+        
+        await LoadData();
+        StateHasChanged();
+    }
+
+    private async Task Logout()
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Deseja realmente sair?");
+        
+        if (!confirmed)
+        {
+            return;
+        }
+
+        Console.WriteLine($"[HOME] 🚪 Logout do usuário: {AuthService.Username}");
+        
+        // Limpar sessão salva
+        await SessionService.ClearSessionAsync();
+        
+        // Limpar estado de autenticação
+        AuthService.Logout();
+        
+        // Limpar campos
+        username = "";
+        password = "";
+        confirmPassword = "";
+        errorMessage = "";
+        successMessage = "";
+        
+        StateHasChanged();
+    }
+
+    private async Task Register()
+    {
+        errorMessage = "";
+        successMessage = "";
+
+        Console.WriteLine("\n========================================");
+        Console.WriteLine("[HOME/REGISTER] Iniciando cadastro...");
+        Console.WriteLine("========================================");
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "Preencha todos os campos";
+            Console.WriteLine($"[HOME/REGISTER] ❌ Validação falhou: Campos vazios");
+            return;
+        }
+
+        if (password != confirmPassword)
+        {
+            errorMessage = "As senhas não coincidem";
+            Console.WriteLine($"[HOME/REGISTER] ❌ Validação falhou: Senhas diferentes");
+            return;
+        }
+
+        if (password.Length < 6)
+        {
+            errorMessage = "A senha deve ter no mínimo 6 caracteres";
+            Console.WriteLine($"[HOME/REGISTER] ❌ Validação falhou: Senha muito curta ({password.Length} chars)");
+            return;
+        }
+
+        Console.WriteLine($"[HOME/REGISTER] ✅ Validações OK");
+        Console.WriteLine($"[HOME/REGISTER] Username: {username}");
+        Console.WriteLine($"[HOME/REGISTER] Password length: {password.Length}");
+        Console.WriteLine($"[HOME/REGISTER] Chamando ApiService.RegisterAsync...");
+
+        var (response, error) = await ApiService.RegisterAsync(username, password);
+
+        if (response == null)
+        {
+            errorMessage = error ?? "Erro desconhecido ao cadastrar.";
+            Console.WriteLine($"[HOME/REGISTER] ❌ FALHA: {errorMessage}");
+            Console.WriteLine("========================================\n");
+            return;
+        }
+
+        Console.WriteLine($"[HOME/REGISTER] ✅ SUCESSO!");
+        Console.WriteLine($"[HOME/REGISTER] UserId: {response.UserId}");
+        Console.WriteLine($"[HOME/REGISTER] Username: {response.Username}");
+        
+        successMessage = "Cadastro realizado com sucesso! Fazendo login...";
+
+        Console.WriteLine($"[HOME/REGISTER] Aguardando 1.5s antes de fazer login...");
+        await Task.Delay(1500);
+
+        Console.WriteLine($"[HOME/REGISTER] Fazendo login automático...");
+        AuthService.Login(response.UserId, response.Username, response.IsAdmin);
+        
+        // Redirecionar não-admin para página de tickets
+        if (!response.IsAdmin)
+        {
+            Navigation.NavigateTo("/tickets");
+            return;
+        }
+        
+        Console.WriteLine($"[HOME/REGISTER] Carregando dados do usuário...");
+        await LoadData();
+        
+        StateHasChanged();
+        
+        Console.WriteLine("========================================\n");
+    }
+
+    private async Task LoadData()
+    {
+        Console.WriteLine("[HOME] Carregando dados...");
+        columns = await ApiService.GetColumnsAsync(AuthService.UserId!.Value);
+        
+        cards.Clear();
+        foreach (var column in columns)
+        {
+            var columnCards = await ApiService.GetCardsAsync(column.Id);
+            cards.AddRange(columnCards);
+        }
+
+        Console.WriteLine($"[HOME] {columns.Count} colunas e {cards.Count} cards carregados");
+    }
+
+    private void ShowAddColumnModal()
+    {
+        showAddColumnModal = true;
+        newColumnName = "";
+        newColumnColor = "green";
+    }
+
+    private async Task CreateColumn()
+    {
+        if (string.IsNullOrWhiteSpace(newColumnName))
+        {
+            return;
+        }
+
+        Console.WriteLine($"[HOME] Criando coluna: {newColumnName}");
+
+        var column = await ApiService.CreateColumnAsync(AuthService.UserId!.Value, newColumnName, newColumnColor);
+
+        if (column != null)
+        {
+            await LoadData();
+            CloseModals();
+        }
+    }
+
+    private async Task DeleteColumn(Guid columnId)
+    {
+        var columnName = columns.FirstOrDefault(c => c.Id == columnId)?.Name ?? "esta coluna";
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Tem certeza que deseja excluir a coluna '{columnName}'?\n\nTodos os cards dentro dela também serão excluídos!");
+        
+        if (!confirmed)
+        {
+            Console.WriteLine($"[HOME] Exclusão de coluna cancelada pelo usuário");
+            return;
+        }
+
+        Console.WriteLine($"[HOME] Deletando coluna: {columnId}");
+
+        var success = await ApiService.DeleteColumnAsync(columnId);
+
+        if (success)
+        {
+            await LoadData();
+        }
+    }
+
+    private void ShowAddCardModal(Guid columnId)
+    {
+        showAddCardModal = true;
+        selectedColumnId = columnId;
+        newCardTitle = "";
+        newCardDescription = "";
+    }
+
+    private async Task CreateCard()
+    {
+        if (string.IsNullOrWhiteSpace(newCardTitle))
+        {
+            return;
+        }
+
+        Console.WriteLine($"[HOME] Criando card: {newCardTitle}");
+
+        var card = await ApiService.CreateCardAsync(selectedColumnId, newCardTitle, newCardDescription);
+
+        if (card != null)
+        {
+            await LoadData();
+            CloseModals();
+        }
+    }
+
+    private void ShowCardDetails(Card card)
+    {
+        selectedCard = card;
+        editCardTitle = card.Title;
+        editCardDescription = card.Description;
+        editCardColumnId = card.ColumnId;
+        showCardDetailsModal = true;
+    }
+
+    private async Task SaveCard()
+    {
+        if (selectedCard == null || string.IsNullOrWhiteSpace(editCardTitle))
+        {
+            return;
+        }
+
+        Console.WriteLine($"[HOME] Salvando card: {selectedCard.Id}");
+
+        var request = new UpdateCardRequest
+        {
+            Title = editCardTitle,
+            Description = editCardDescription,
+            ColumnId = editCardColumnId != selectedCard.ColumnId ? editCardColumnId : null
+        };
+
+        var result = await ApiService.UpdateCardAsync(selectedCard.Id, request);
+
+        if (result != null)
+        {
+            await LoadData();
+            CloseModals();
+        }
+    }
+
+    private async Task DeleteCard()
+    {
+        if (selectedCard == null)
+        {
+            return;
+        }
+
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Tem certeza que deseja excluir o card '{selectedCard.Title}'?");
+        
+        if (!confirmed)
+        {
+            Console.WriteLine($"[HOME] Exclusão de card cancelada pelo usuário");
+            return;
+        }
+
+        Console.WriteLine($"[HOME] Deletando card: {selectedCard.Id}");
+
+        var success = await ApiService.DeleteCardAsync(selectedCard.Id);
+
+        if (success)
+        {
+            await LoadData();
+            CloseModals();
+        }
+    }
+
+    private async Task RewriteDescription()
+    {
+        if (selectedCard == null || string.IsNullOrWhiteSpace(editCardDescription))
+        {
+            return;
+        }
+
+        isRewriting = true;
+        Console.WriteLine("[HOME] Reescrevendo descrição...");
+
+        var rewrittenText = await ApiService.RewriteDescriptionAsync(selectedCard.Id);
+
+        if (!string.IsNullOrEmpty(rewrittenText))
+        {
+            editCardDescription = rewrittenText;
+            Console.WriteLine("[HOME] Descrição reescrita com sucesso");
+        }
+
+        isRewriting = false;
+    }
+
+    private async Task RewriteNewCardDescription()
+    {
+        if (string.IsNullOrWhiteSpace(newCardDescription))
+        {
+            return;
+        }
+
+        isRewritingNew = true;
+        Console.WriteLine("[HOME] Reescrevendo nova descrição...");
+
+        var rewrittenText = await ApiService.RewriteTextAsync(newCardDescription);
+        
+        if (!string.IsNullOrEmpty(rewrittenText))
+        {
+            newCardDescription = rewrittenText;
+            Console.WriteLine("[HOME] Nova descrição reescrita com sucesso");
+        }
+
+        isRewritingNew = false;
+    }
+
+    private void HandleCardDragStart(Card card)
+    {
+        draggedCard = card;
+        Console.WriteLine($"[DRAG] ✅ Iniciando drag do card: {card.Title} (ID: {card.Id})");
+        Console.WriteLine($"[DRAG] Coluna atual: {card.ColumnId}");
+    }
+
+    private void HandleDragOver()
+    {
+        Console.WriteLine($"[DRAG] Mouse sobre área de drop");
+    }
+
+    private async Task HandleDrop(Guid targetColumnId)
+    {
+        Console.WriteLine($"\n[DRAG] ⬇️ DROP DETECTADO!");
+        Console.WriteLine($"[DRAG] Coluna alvo: {targetColumnId}");
+        
+        if (draggedCard == null)
+        {
+            Console.WriteLine($"[DRAG] ❌ Nenhum card arrastado!");
+            return;
+        }
+
+        Console.WriteLine($"[DRAG] Card arrastado: {draggedCard.Title}");
+        Console.WriteLine($"[DRAG] Coluna origem: {draggedCard.ColumnId}");
+        Console.WriteLine($"[DRAG] Coluna destino: {targetColumnId}");
+
+        if (draggedCard.ColumnId != targetColumnId)
+        {
+            Console.WriteLine($"[DRAG] 🔄 Movendo card entre colunas...");
+
+            var request = new UpdateCardRequest { ColumnId = targetColumnId };
+            var result = await ApiService.UpdateCardAsync(draggedCard.Id, request);
+
+            if (result != null)
+            {
+                Console.WriteLine($"[DRAG] ✅ Card movido com sucesso!");
+                await LoadData();
+            }
+            else
+            {
+                Console.WriteLine($"[DRAG] ❌ Falha ao mover card!");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"[DRAG] ℹ️ Card já está nesta coluna");
+        }
+
+        draggedCard = null;
+        Console.WriteLine($"[DRAG] Drag finalizado\n");
+    }
+
+    private void CloseModals()
+    {
+        showAddColumnModal = false;
+        showAddCardModal = false;
+        showCardDetailsModal = false;
+        selectedCard = null;
+    }
+
+    private string GetColorCode(string colorName)
+    {
+        return colorName.ToLower() switch
+        {
+            "red" => "#DC2626",
+            "blue" => "#2563EB",
+            "green" => "#00FF00",
+            "yellow" => "#EAB308",
+            "orange" => "#EA580C",
+            "pink" => "#EC4899",
+            "brown" => "#92400E",
+            "black" => "#000000",
+            "white" => "#FFFFFF",
+            "gray" => "#6B7280",
+            _ => "#00FF00"
+        };
+    }
+}

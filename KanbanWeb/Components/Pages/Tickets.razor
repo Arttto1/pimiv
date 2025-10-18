@@ -1,0 +1,521 @@
+@page "/tickets"
+@using KanbanWeb.Models
+@using KanbanWeb.Services
+@inject TicketService TicketService
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+@inject SessionService SessionService
+@rendermode InteractiveServer
+
+<PageTitle>Sistema de Chamados</PageTitle>
+
+<div class="tickets-container">
+    <div class="header-section">
+        <h1>📋 Sistema de Chamados</h1>
+        <div class="user-info">
+            <span>Usuário: @AuthService.Username</span>
+            <button class="btn btn-danger" @onclick="Logout">Sair</button>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <!-- Formulário de Criação de Ticket -->
+        <div class="form-section">
+            <h2>✏️ Criar Novo Chamado</h2>
+
+            @if (!string.IsNullOrEmpty(statusMessage))
+            {
+                <div class="alert @(isSuccess ? "alert-success" : "alert-error")">
+                    @statusMessage
+                </div>
+            }
+
+            <div class="form-group">
+                <label>Enviar para Admin:</label>
+                <select class="form-control" @bind="selectedAdminId">
+                    <option value="">Selecione um admin...</option>
+                    @if (adminUsers != null)
+                    {
+                        @foreach (var admin in adminUsers)
+                        {
+                            <option value="@admin.Id">@admin.Username</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Título:</label>
+                <input type="text" class="form-control" @bind="ticketTitle" placeholder="Digite o título do chamado" />
+            </div>
+
+            <div class="form-group">
+                <label>Descrição:</label>
+                <textarea class="form-control" rows="5" @bind="ticketDescription" placeholder="Descreva o problema ou solicitação"></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" @onclick="RewriteText" disabled="@isRewriting">
+                    @if (isRewriting)
+                    {
+                        <span>⏳ Melhorando...</span>
+                    }
+                    else
+                    {
+                        <span>🤖 Melhorar com IA</span>
+                    }
+                </button>
+
+                <button class="btn btn-primary" @onclick="CreateTicket" disabled="@isCreating">
+                    @if (isCreating)
+                    {
+                        <span>⏳ Enviando...</span>
+                    }
+                    else
+                    {
+                        <span>📤 Enviar Chamado</span>
+                    }
+                </button>
+            </div>
+        </div>
+
+        <!-- Lista de Tickets -->
+        <div class="tickets-section">
+            <div class="tickets-header">
+                <h2>📊 Meus Chamados</h2>
+                <button class="btn btn-secondary-sm" @onclick="LoadUserTickets" disabled="@isLoading">
+                    @if (isLoading)
+                    {
+                        <span>⏳ Atualizando...</span>
+                    }
+                    else
+                    {
+                        <span>🔄 Atualizar</span>
+                    }
+                </button>
+            </div>
+
+            @if (userTickets == null)
+            {
+                <div class="loading">Carregando chamados...</div>
+            }
+            else if (userTickets.Count == 0)
+            {
+                <div class="empty-state">
+                    <p>📭 Nenhum chamado criado ainda</p>
+                </div>
+            }
+            else
+            {
+                <div class="tickets-list">
+                    @foreach (var ticket in userTickets)
+                    {
+                        <div class="ticket-card">
+                            <h3>@ticket.Title</h3>
+                            <p class="description">@ticket.Description</p>
+                            <div class="ticket-meta">
+                                <span class="badge badge-admin">👤 Admin: @ticket.AdminUsername</span>
+                                <span class="badge badge-column">📍 @ticket.CurrentColumnName</span>
+                            </div>
+                            <div class="ticket-date">🕐 Criado em: @ticket.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<AdminUserResponse>? adminUsers;
+    private List<TicketInfoResponse>? userTickets;
+    
+    private string selectedAdminId = "";
+    private string ticketTitle = "";
+    private string ticketDescription = "";
+    
+    private bool isCreating = false;
+    private bool isRewriting = false;
+    private bool isLoading = false;
+    
+    private string statusMessage = "";
+    private bool isSuccess = false;
+
+    private bool _sessionLoaded = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _sessionLoaded)
+            return;
+
+        _sessionLoaded = true;
+
+        // Carregar sessão se ainda não estiver autenticado
+        if (!AuthService.IsAuthenticated)
+        {
+            var (userId, savedUsername, isAdmin) = await SessionService.LoadSessionAsync();
+
+            if (userId.HasValue && !string.IsNullOrEmpty(savedUsername))
+            {
+                AuthService.Login(userId.Value, savedUsername, isAdmin);
+                Console.WriteLine($"[TICKETS] Login automático: {savedUsername} (Admin: {isAdmin})");
+            }
+        }
+
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Verificar se está autenticado e não é admin
+        if (!AuthService.IsAuthenticated)
+        {
+            Console.WriteLine("[TICKETS] Usuário não autenticado, redirecionando para home");
+            return; // Aguarda o OnAfterRenderAsync carregar a sessão
+        }
+
+        if (AuthService.IsAdmin)
+        {
+            // Admin deve usar o Kanban normal
+            Console.WriteLine("[TICKETS] Usuário é admin, redirecionando para home");
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        Console.WriteLine($"[TICKETS] Carregando dados para usuário: {AuthService.Username}");
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        adminUsers = await TicketService.GetAdminUsersAsync();
+        await LoadUserTickets();
+    }
+
+    private async Task LoadUserTickets()
+    {
+        if (AuthService.UserId.HasValue)
+        {
+            isLoading = true;
+            userTickets = await TicketService.GetUserTicketsAsync(AuthService.UserId.Value);
+            isLoading = false;
+        }
+    }
+
+    private async Task CreateTicket()
+    {
+        statusMessage = "";
+        
+        if (string.IsNullOrWhiteSpace(ticketTitle) || string.IsNullOrWhiteSpace(ticketDescription))
+        {
+            statusMessage = "❌ Preencha o título e a descrição";
+            isSuccess = false;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(selectedAdminId))
+        {
+            statusMessage = "❌ Selecione um admin";
+            isSuccess = false;
+            return;
+        }
+
+        if (!AuthService.UserId.HasValue)
+        {
+            statusMessage = "❌ Erro: usuário não autenticado";
+            isSuccess = false;
+            return;
+        }
+
+        isCreating = true;
+
+        var request = new CreateTicketRequest
+        {
+            AdminId = Guid.Parse(selectedAdminId),
+            Title = ticketTitle,
+            Description = ticketDescription
+        };
+
+        var ticket = await TicketService.CreateTicketAsync(AuthService.UserId.Value, request);
+
+        isCreating = false;
+
+        if (ticket != null)
+        {
+            statusMessage = "✅ Chamado criado com sucesso!";
+            isSuccess = true;
+            
+            // Limpar formulário
+            ticketTitle = "";
+            ticketDescription = "";
+            selectedAdminId = "";
+            
+            // Recarregar lista
+            await LoadUserTickets();
+        }
+        else
+        {
+            statusMessage = "❌ Erro ao criar chamado";
+            isSuccess = false;
+        }
+    }
+
+    private async Task RewriteText()
+    {
+        if (string.IsNullOrWhiteSpace(ticketDescription))
+        {
+            statusMessage = "❌ Digite uma descrição para melhorar";
+            isSuccess = false;
+            return;
+        }
+
+        isRewriting = true;
+        statusMessage = "";
+
+        var rewrittenText = await TicketService.RewriteTextAsync(Guid.Empty, ticketDescription);
+
+        isRewriting = false;
+
+        if (!string.IsNullOrEmpty(rewrittenText))
+        {
+            ticketDescription = rewrittenText;
+            statusMessage = "✅ Texto melhorado com IA!";
+            isSuccess = true;
+        }
+        else
+        {
+            statusMessage = "❌ Erro ao melhorar texto";
+            isSuccess = false;
+        }
+    }
+
+    private async Task Logout()
+    {
+        AuthService.Logout();
+        await SessionService.ClearSessionAsync();
+        NavigationManager.NavigateTo("/");
+    }
+}
+
+<style>
+    .tickets-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .header-section {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-section h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 20px;
+    }
+
+    .form-section, .tickets-section {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #555;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #4CAF50;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .btn:hover:not(:disabled) {
+        opacity: 0.8;
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-primary {
+        background: #4CAF50;
+        color: white;
+        flex: 1;
+    }
+
+    .btn-secondary {
+        background: #2196F3;
+        color: white;
+        flex: 1;
+    }
+
+    .btn-secondary-sm {
+        background: #9E9E9E;
+        color: white;
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    .btn-danger {
+        background: #F44336;
+        color: white;
+        padding: 8px 20px;
+    }
+
+    .alert {
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background: #E8F5E9;
+        color: #2E7D32;
+        border: 1px solid #A5D6A7;
+    }
+
+    .alert-error {
+        background: #FFEBEE;
+        color: #C62828;
+        border: 1px solid #EF9A9A;
+    }
+
+    .tickets-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .tickets-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    .ticket-card {
+        background: #F9F9F9;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px;
+        padding: 15px;
+    }
+
+    .ticket-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .description {
+        color: #666;
+        font-size: 14px;
+        margin: 0 0 10px 0;
+        line-height: 1.5;
+    }
+
+    .ticket-meta {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        color: white;
+    }
+
+    .badge-admin {
+        background: #2196F3;
+    }
+
+    .badge-column {
+        background: #FF9800;
+    }
+
+    .ticket-date {
+        font-size: 11px;
+        color: #999;
+    }
+
+    .loading, .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+
+    @@media (max-width: 768px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
