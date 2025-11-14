@@ -1,68 +1,134 @@
-# 📋 Sistema Kanban - Gerenciamento de Tarefas Multiplataforma# Kanban Board - Sistema Completo em C#
+# 📋 Sistema Kanban# 📋 Sistema Kanban - Gerenciamento de Tarefas Multiplataforma# Kanban Board - Sistema Completo em C#
 
 
 
-![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)Sistema Kanban completo com API REST e dois frontends (Desktop WPF e Web Blazor) integrado com **MS SQL Server**.
+Sistema de gerenciamento de tarefas estilo Kanban com múltiplas interfaces (Web e Desktop) e sistema de tickets.
 
-![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)
 
-![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server)**📦 Compatível com .NET 9.0**
 
-![WPF](https://img.shields.io/badge/WPF-512BD4?style=for-the-badge&logo=windows)**🗄️ Banco de Dados: Microsoft SQL Server**
+## 🚀 Como Executar![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)Sistema Kanban completo com API REST e dois frontends (Desktop WPF e Web Blazor) integrado com **MS SQL Server**.
 
-![Blazor](https://img.shields.io/badge/Blazor-512BD4?style=for-the-badge&logo=blazor)
 
-## 📋 Estrutura do Projeto
+
+### 1. Configurar o Banco de Dados![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)
+
+
+
+```powershell![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server)**📦 Compatível com .NET 9.0**
+
+.\setup_localdb.ps1
+
+```![WPF](https://img.shields.io/badge/WPF-512BD4?style=for-the-badge&logo=windows)**🗄️ Banco de Dados: Microsoft SQL Server**
+
+
+
+Ou manualmente:![Blazor](https://img.shields.io/badge/Blazor-512BD4?style=for-the-badge&logo=blazor)
+
+```powershell
+
+sqlcmd -S "(localdb)\MSSQLLocalDB" -i setup_database.sql## 📋 Estrutura do Projeto
+
+```
 
 Sistema completo de gerenciamento de tarefas estilo Kanban com múltiplas interfaces (Web e Desktop), sistema de tickets e autenticação segura.
 
+### 2. Executar a API
+
 ```
 
-## 🎯 Sobre o Projetopim/
+```powershell
 
-├── KanbanAPI/          # API REST (ASP.NET Core)
+cd KanbanAPI## 🎯 Sobre o Projetopim/
+
+dotnet run
+
+```├── KanbanAPI/          # API REST (ASP.NET Core)
+
+API disponível em: `http://localhost:5000`
 
 O **Sistema Kanban** é uma aplicação multiplataforma desenvolvida como projeto acadêmico da UNIP que implementa um quadro Kanban completo com recursos avançados de gerenciamento de tarefas e sistema de suporte via tickets.├── KanbanDesktop/      # Frontend Desktop (WPF)
 
+### 3. Executar o Cliente
+
 ├── KanbanWeb/          # Frontend Web (Blazor Server)
 
-### ✨ Principais Funcionalidades├── migration_sqlserver.sql      # Script de criação do banco
+**Desktop (WPF):**
 
-└── DEPLOY_WINDOWS_SERVER.md     # Guia completo de deploy
+```powershell### ✨ Principais Funcionalidades├── migration_sqlserver.sql      # Script de criação do banco
+
+cd KanbanDesktop
+
+dotnet run└── DEPLOY_WINDOWS_SERVER.md     # Guia completo de deploy
+
+```
 
 - 🔐 **Autenticação segura** com BCrypt```
 
-- 📊 **Quadro Kanban personalizável** (colunas e cards)
+**Web (Blazor):**
 
-- 🎫 **Sistema de Tickets** para usuários não-admin## 🚀 Funcionalidades
+```powershell- 📊 **Quadro Kanban personalizável** (colunas e cards)
 
-- 🖥️ **Interface Desktop** em WPF com tema dark
+cd KanbanWeb
 
-- 🌐 **Interface Web** em Blazor Server### ✅ Gerenciamento de Colunas
+dotnet run- 🎫 **Sistema de Tickets** para usuários não-admin## 🚀 Funcionalidades
 
-- 👥 **Gestão de usuários** (admin e usuários comuns)- Criar colunas com nome e cor personalizados
+```
+
+Web disponível em: `http://localhost:5001`- 🖥️ **Interface Desktop** em WPF com tema dark
+
+
+
+## 🔑 Credenciais- 🌐 **Interface Web** em Blazor Server### ✅ Gerenciamento de Colunas
+
+
+
+- **Admin:** `admin` / `senha123` (acesso ao Kanban)- 👥 **Gestão de usuários** (admin e usuários comuns)- Criar colunas com nome e cor personalizados
+
+- **Usuários:** `joao`, `maria`, `pedro` / `senha123` (sistema de tickets)
 
 - 💾 **Persistência de sessão** (login automático)- Excluir colunas (deleta automaticamente todos os cards)
 
+## 🛠️ Tecnologias
+
 - 🎨 **UI moderna** com design responsivo- Coluna "Chamados" protegida contra exclusão
 
-- Cores disponíveis: vermelho, verde, azul, amarelo, laranja, rosa, marrom, preto, branco, cinza
+### KanbanAPI (Backend)
 
-### 🏗️ Arquitetura
+- ASP.NET Core 9.0- Cores disponíveis: vermelho, verde, azul, amarelo, laranja, rosa, marrom, preto, branco, cinza
+
+- SQL Server LocalDB
+
+- BCrypt para criptografia### 🏗️ Arquitetura
+
+- Swagger para documentação
 
 ### ✅ Gerenciamento de Cards
 
-```- Criar cards com título e descrição
+### KanbanDesktop (Frontend)
 
-KanbanSystem/- Editar cards existentes
+- WPF (Windows Presentation Foundation)```- Criar cards com título e descrição
 
-├── 🔌 KanbanAPI          # Backend REST API (.NET 9.0)- Excluir cards
+- XAML
 
-├── 🖥️ KanbanDesktop      # Cliente Desktop (WPF)- Mover cards entre colunas via drag-drop
+- HttpClientKanbanSystem/- Editar cards existentes
+
+
+
+### KanbanWeb (Frontend)├── 🔌 KanbanAPI          # Backend REST API (.NET 9.0)- Excluir cards
+
+- Blazor Server
+
+- Razor Components├── 🖥️ KanbanDesktop      # Cliente Desktop (WPF)- Mover cards entre colunas via drag-drop
+
+- JavaScript Interop
 
 └── 🌐 KanbanWeb          # Cliente Web (Blazor Server)- Mover cards entre colunas via dropdown no modal
 
+---
+
 ```
+
+**Projeto acadêmico - UNIP 2025**
 
 ### ✅ Sistema de Tickets (Chamados)
 
