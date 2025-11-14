@@ -1,70 +1,138 @@
-# 📋 Sistema Kanban# 📋 Sistema Kanban - Gerenciamento de Tarefas Multiplataforma# Kanban Board - Sistema Completo em C#
+# Sistema Kanban# 📋 Sistema Kanban# 📋 Sistema Kanban - Gerenciamento de Tarefas Multiplataforma# Kanban Board - Sistema Completo em C#
 
 
 
-Sistema de gerenciamento de tarefas estilo Kanban com múltiplas interfaces (Web e Desktop) e sistema de tickets.
+Sistema de gerenciamento de tarefas com Kanban board e sistema de tickets.
 
 
 
-## 🚀 Como Executar![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)Sistema Kanban completo com API REST e dois frontends (Desktop WPF e Web Blazor) integrado com **MS SQL Server**.
+## Como ExecutarSistema de gerenciamento de tarefas estilo Kanban com múltiplas interfaces (Web e Desktop) e sistema de tickets.
 
 
 
-### 1. Configurar o Banco de Dados![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)
+### 1. Configurar o Banco de Dados
 
 
 
-```powershell![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server)**📦 Compatível com .NET 9.0**
+```powershell## 🚀 Como Executar![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)Sistema Kanban completo com API REST e dois frontends (Desktop WPF e Web Blazor) integrado com **MS SQL Server**.
 
 .\setup_localdb.ps1
 
-```![WPF](https://img.shields.io/badge/WPF-512BD4?style=for-the-badge&logo=windows)**🗄️ Banco de Dados: Microsoft SQL Server**
+```
 
 
 
-Ou manualmente:![Blazor](https://img.shields.io/badge/Blazor-512BD4?style=for-the-badge&logo=blazor)
+Ou manualmente:### 1. Configurar o Banco de Dados![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)
 
 ```powershell
 
-sqlcmd -S "(localdb)\MSSQLLocalDB" -i setup_database.sql## 📋 Estrutura do Projeto
+sqlcmd -S "(localdb)\MSSQLLocalDB" -i setup_database.sql
 
 ```
 
-Sistema completo de gerenciamento de tarefas estilo Kanban com múltiplas interfaces (Web e Desktop), sistema de tickets e autenticação segura.
+```powershell![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server)**📦 Compatível com .NET 9.0**
 
-### 2. Executar a API
+### 2. Rodar a API
 
-```
+.\setup_localdb.ps1
 
 ```powershell
 
-cd KanbanAPI## 🎯 Sobre o Projetopim/
+cd KanbanAPI```![WPF](https://img.shields.io/badge/WPF-512BD4?style=for-the-badge&logo=windows)**🗄️ Banco de Dados: Microsoft SQL Server**
 
 dotnet run
 
-```├── KanbanAPI/          # API REST (ASP.NET Core)
+```
+
+
+
+A API estará em `http://localhost:5000`Ou manualmente:![Blazor](https://img.shields.io/badge/Blazor-512BD4?style=for-the-badge&logo=blazor)
+
+
+
+### 3. Rodar o Cliente```powershell
+
+
+
+**Desktop (WPF):**sqlcmd -S "(localdb)\MSSQLLocalDB" -i setup_database.sql## 📋 Estrutura do Projeto
+
+```powershell
+
+cd KanbanDesktop```
+
+dotnet run
+
+```Sistema completo de gerenciamento de tarefas estilo Kanban com múltiplas interfaces (Web e Desktop), sistema de tickets e autenticação segura.
+
+
+
+**Web (Blazor):**### 2. Executar a API
+
+```powershell
+
+cd KanbanWeb```
+
+dotnet run
+
+``````powershell
+
+
+
+O site estará em `http://localhost:5001`cd KanbanAPI## 🎯 Sobre o Projetopim/
+
+
+
+## Credenciais de Testedotnet run
+
+
+
+**Admin:** `admin` / `senha123`  ```├── KanbanAPI/          # API REST (ASP.NET Core)
+
+**Usuários:** `joao`, `maria`, `pedro` / `senha123`
 
 API disponível em: `http://localhost:5000`
 
+## Tecnologias
+
 O **Sistema Kanban** é uma aplicação multiplataforma desenvolvida como projeto acadêmico da UNIP que implementa um quadro Kanban completo com recursos avançados de gerenciamento de tarefas e sistema de suporte via tickets.├── KanbanDesktop/      # Frontend Desktop (WPF)
 
-### 3. Executar o Cliente
+**KanbanAPI (Backend)**
 
-├── KanbanWeb/          # Frontend Web (Blazor Server)
+- ASP.NET Core 9.0### 3. Executar o Cliente
+
+- SQL Server LocalDB
+
+- BCrypt├── KanbanWeb/          # Frontend Web (Blazor Server)
+
+- Swagger
 
 **Desktop (WPF):**
 
-```powershell### ✨ Principais Funcionalidades├── migration_sqlserver.sql      # Script de criação do banco
+**KanbanDesktop (WPF)**
 
-cd KanbanDesktop
+- Windows Presentation Foundation```powershell### ✨ Principais Funcionalidades├── migration_sqlserver.sql      # Script de criação do banco
 
-dotnet run└── DEPLOY_WINDOWS_SERVER.md     # Guia completo de deploy
+- XAML
 
-```
+- HttpClientcd KanbanDesktop
+
+
+
+**KanbanWeb (Blazor)**dotnet run└── DEPLOY_WINDOWS_SERVER.md     # Guia completo de deploy
+
+- Blazor Server
+
+- Razor Components```
+
+- JavaScript Interop
 
 - 🔐 **Autenticação segura** com BCrypt```
 
+---
+
 **Web (Blazor):**
+
+Projeto acadêmico - UNIP 2025
 
 ```powershell- 📊 **Quadro Kanban personalizável** (colunas e cards)
 
