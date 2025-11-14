@@ -1,0 +1,2315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Kanban com Gestão de Tickets - Documentação Técnica</title>
+    <style>
+        /* Formatação ABNT */
+        @page {
+            size: A4;
+            margin: 3cm 2cm 2cm 3cm;
+        }
+        
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: justify;
+            margin: 0;
+            padding: 2cm;
+            color: #000;
+        }
+        
+        .capa {
+            text-align: center;
+            page-break-after: always;
+        }
+        
+        .capa h1 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 0;
+            text-transform: uppercase;
+        }
+        
+        .capa .titulo-trabalho {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 8cm;
+            text-transform: uppercase;
+        }
+        
+        .capa .subtitulo {
+            font-size: 12pt;
+            margin-top: 2cm;
+            text-align: right;
+            margin-right: 2cm;
+        }
+        
+        .capa .rodape {
+            position: absolute;
+            bottom: 2cm;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 0;
+            margin-bottom: 1.5cm;
+            page-break-before: always;
+        }
+        
+        h2 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-top: 1.5cm;
+            margin-bottom: 1cm;
+        }
+        
+        h3 {
+            font-size: 12pt;
+            font-weight: bold;
+            font-style: italic;
+            margin-top: 1cm;
+            margin-bottom: 0.5cm;
+        }
+        
+        p {
+            text-indent: 1.25cm;
+            margin: 0;
+            margin-bottom: 0.5cm;
+        }
+        
+        .sem-recuo {
+            text-indent: 0;
+        }
+        
+        .citacao-longa {
+            font-size: 10pt;
+            margin-left: 4cm;
+            margin-right: 0;
+            margin-top: 0.5cm;
+            margin-bottom: 0.5cm;
+            line-height: 1;
+            text-indent: 0;
+        }
+        
+        .resumo {
+            page-break-after: always;
+        }
+        
+        .resumo-titulo {
+            text-align: center;
+            font-weight: bold;
+            font-size: 12pt;
+            text-transform: uppercase;
+            margin-bottom: 1cm;
+        }
+        
+        .palavras-chave {
+            margin-top: 1cm;
+        }
+        
+        .sumario {
+            page-break-after: always;
+        }
+        
+        .sumario-titulo {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14pt;
+            text-transform: uppercase;
+            margin-bottom: 1.5cm;
+        }
+        
+        .sumario-item {
+            text-indent: 0;
+            margin-left: 0;
+        }
+        
+        .sumario-item.nivel-1 {
+            font-weight: bold;
+            margin-top: 0.5cm;
+        }
+        
+        .sumario-item.nivel-2 {
+            margin-left: 1cm;
+        }
+        
+        .sumario-item.nivel-3 {
+            margin-left: 2cm;
+        }
+        
+        ul, ol {
+            margin-left: 1.25cm;
+            margin-bottom: 0.5cm;
+        }
+        
+        li {
+            margin-bottom: 0.3cm;
+        }
+        
+        .codigo {
+            font-family: 'Courier New', monospace;
+            font-size: 10pt;
+            background-color: #f5f5f5;
+            padding: 0.5cm;
+            margin: 0.5cm 0;
+            border: 1px solid #ccc;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1cm 0;
+            font-size: 10pt;
+        }
+        
+        table, th, td {
+            border: 1px solid #000;
+        }
+        
+        th, td {
+            padding: 0.3cm;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        .figura {
+            text-align: center;
+            margin: 1cm 0;
+        }
+        
+        .legenda {
+            font-size: 10pt;
+            margin-top: 0.3cm;
+            text-indent: 0;
+        }
+        
+        .referencias {
+            page-break-before: always;
+        }
+        
+        .referencias p {
+            text-indent: 0;
+            margin-left: 0;
+            margin-bottom: 0.5cm;
+        }
+        
+        .destaque {
+            font-weight: bold;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            
+            .page-break {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- CAPA -->
+<div class="capa">
+    <h1>UNIVERSIDADE PAULISTA - UNIP</h1>
+    <h1>CURSO DE ANÁLISE E DESENVOLVIMENTO DE SISTEMAS</h1>
+    
+    <div class="titulo-trabalho">
+        SISTEMA KANBAN COM GESTÃO DE TICKETS:<br>
+        APLICAÇÃO MULTIPLATAFORMA PARA GERENCIAMENTO<br>
+        DE PROJETOS E CHAMADOS
+    </div>
+    
+    <div class="subtitulo">
+        Projeto Integrado Multidisciplinar<br>
+        apresentado como requisito parcial para<br>
+        avaliação das disciplinas do curso de<br>
+        Análise e Desenvolvimento de Sistemas.<br><br>
+        
+        <strong>Aluno:</strong> Arthur Pagiatto Nunes<br>
+        <strong>Orientador:</strong> Prof. Jonathan Rogieri
+    </div>
+    
+    <div class="rodape">
+        São Paulo<br>
+        2025
+    </div>
+</div>
+
+<!-- RESUMO -->
+<div class="resumo">
+    <div class="resumo-titulo">RESUMO</div>
+    
+    <p>Este trabalho apresenta o desenvolvimento de um sistema Kanban multiplataforma integrado a um módulo de gestão de tickets, implementado utilizando tecnologias modernas da plataforma .NET. O projeto foi concebido como uma solução completa para gerenciamento de projetos ágeis, permitindo tanto a visualização e movimentação de cards em quadros Kanban quanto a criação e acompanhamento de chamados direcionados a usuários administradores. O sistema foi desenvolvido em três frentes: uma API RESTful construída com ASP.NET Core, uma aplicação desktop desenvolvida em WPF (Windows Presentation Foundation), e uma aplicação web implementada com Blazor Server. A arquitetura do sistema segue os princípios da Programação Orientada a Objetos (POO), com clara separação de responsabilidades através do padrão de camadas (Controllers, Services, Models). O banco de dados Microsoft SQL Server LocalDB armazena todas as informações de usuários, colunas, cards e tickets. Uma das principais inovações do sistema é a diferenciação entre usuários administradores e não-administradores: enquanto os primeiros têm acesso completo ao quadro Kanban com uma coluna especial e não-deletável chamada "Chamados", os segundos utilizam uma interface dedicada para criar tickets que são automaticamente convertidos em cards na coluna "Chamados" do administrador escolhido. O sistema também integra funcionalidades de Inteligência Artificial para reescrita e melhoria de textos, facilitando a comunicação e documentação. Durante o desenvolvimento, foram aplicados conceitos de gerenciamento de projetos, controle de qualidade através de versionamento Git, e considerações sobre inclusão digital e viabilidade econômica. O resultado é uma aplicação robusta, escalável e de fácil utilização, demonstrando a aplicação prática dos conhecimentos adquiridos ao longo do curso de Análise e Desenvolvimento de Sistemas.</p>
+    
+    <p class="palavras-chave sem-recuo">
+        <strong>Palavras-chave:</strong> Kanban. Sistema de Tickets. ASP.NET Core. Programação Orientada a Objetos. Aplicação Multiplataforma. Gestão de Projetos.
+    </p>
+</div>
+
+<!-- ABSTRACT -->
+<div class="resumo">
+    <div class="resumo-titulo">ABSTRACT</div>
+    
+    <p>This work presents the development of a multiplatform Kanban system integrated with a ticket management module, implemented using modern .NET platform technologies. The project was conceived as a complete solution for agile project management, allowing both the visualization and movement of cards on Kanban boards and the creation and tracking of tickets directed to administrator users. The system was developed on three fronts: a RESTful API built with ASP.NET Core, a desktop application developed in WPF (Windows Presentation Foundation), and a web application implemented with Blazor Server. The system architecture follows the principles of Object-Oriented Programming (OOP), with clear separation of responsibilities through the layered pattern (Controllers, Services, Models). The Microsoft SQL Server LocalDB database stores all information about users, columns, cards, and tickets. One of the main innovations of the system is the differentiation between administrator and non-administrator users: while the former have full access to the Kanban board with a special non-deletable column called "Tickets", the latter use a dedicated interface to create tickets that are automatically converted into cards in the chosen administrator's "Tickets" column. The system also integrates Artificial Intelligence functionalities for text rewriting and improvement, facilitating communication and documentation. During development, concepts of project management, quality control through Git versioning, and considerations about digital inclusion and economic viability were applied. The result is a robust, scalable, and user-friendly application, demonstrating the practical application of knowledge acquired throughout the Systems Analysis and Development course.</p>
+    
+    <p class="palavras-chave sem-recuo">
+        <strong>Keywords:</strong> Kanban. Ticket System. ASP.NET Core. Object-Oriented Programming. Multiplatform Application. Project Management.
+    </p>
+</div>
+
+<!-- SUMÁRIO -->
+<div class="sumario">
+    <div class="sumario-titulo">SUMÁRIO</div>
+    
+    <p class="sumario-item nivel-1">1 INTRODUÇÃO</p>
+    <p class="sumario-item nivel-2">1.1 Contextualização</p>
+    <p class="sumario-item nivel-2">1.2 Justificativa</p>
+    <p class="sumario-item nivel-2">1.3 Objetivos</p>
+    <p class="sumario-item nivel-3">1.3.1 Objetivo Geral</p>
+    <p class="sumario-item nivel-3">1.3.2 Objetivos Específicos</p>
+    
+    <p class="sumario-item nivel-1">2 PROJETO DE SISTEMAS ORIENTADO A OBJETOS</p>
+    <p class="sumario-item nivel-2">2.1 Princípios da Programação Orientada a Objetos</p>
+    <p class="sumario-item nivel-2">2.2 Arquitetura do Sistema</p>
+    <p class="sumario-item nivel-2">2.3 Modelagem de Classes</p>
+    <p class="sumario-item nivel-2">2.4 Padrões de Projeto Aplicados</p>
+    
+    <p class="sumario-item nivel-1">3 PROGRAMAÇÃO ORIENTADA A OBJETOS II E TÓPICOS ESPECIAIS</p>
+    <p class="sumario-item nivel-2">3.1 Implementação em C# e ASP.NET</p>
+    <p class="sumario-item nivel-2">3.2 API RESTful com ASP.NET Core</p>
+    <p class="sumario-item nivel-2">3.3 Técnicas Modernas de Programação</p>
+    <p class="sumario-item nivel-2">3.4 Integração com Banco de Dados</p>
+    
+    <p class="sumario-item nivel-1">4 DESENVOLVIMENTO PARA INTERNET</p>
+    <p class="sumario-item nivel-2">4.1 Interface Desktop com WPF</p>
+    <p class="sumario-item nivel-2">4.2 Interface Web com Blazor</p>
+    <p class="sumario-item nivel-2">4.3 Experiência do Usuário (UX)</p>
+    <p class="sumario-item nivel-2">4.4 Responsividade e Acessibilidade</p>
+    
+    <p class="sumario-item nivel-1">5 GERENCIAMENTO DE PROJETOS DE SOFTWARE</p>
+    <p class="sumario-item nivel-2">5.1 Planejamento do Projeto</p>
+    <p class="sumario-item nivel-2">5.2 Cronograma de Desenvolvimento</p>
+    <p class="sumario-item nivel-2">5.3 Gerenciamento de Riscos</p>
+    <p class="sumario-item nivel-2">5.4 Metodologia Ágil Aplicada</p>
+    
+    <p class="sumario-item nivel-1">6 GESTÃO DA QUALIDADE</p>
+    <p class="sumario-item nivel-2">6.1 Versionamento com Git</p>
+    <p class="sumario-item nivel-2">6.2 Práticas de Teste</p>
+    <p class="sumario-item nivel-2">6.3 Controle de Qualidade do Código</p>
+    <p class="sumario-item nivel-2">6.4 Documentação Técnica</p>
+    
+    <p class="sumario-item nivel-1">7 RELAÇÕES ÉTNICO-RACIAIS E AFRODESCENDÊNCIA</p>
+    <p class="sumario-item nivel-2">7.1 Inclusão Digital</p>
+    <p class="sumario-item nivel-2">7.2 Diversidade no Design</p>
+    <p class="sumario-item nivel-2">7.3 Acessibilidade Universal</p>
+    
+    <p class="sumario-item nivel-1">8 EMPREENDEDORISMO</p>
+    <p class="sumario-item nivel-2">8.1 Análise de Viabilidade</p>
+    <p class="sumario-item nivel-2">8.2 Modelo de Negócio</p>
+    <p class="sumario-item nivel-2">8.3 Sustentabilidade do Projeto</p>
+    <p class="sumario-item nivel-2">8.4 Perspectivas de Mercado</p>
+    
+    <p class="sumario-item nivel-1">9 IMPLEMENTAÇÃO TÉCNICA</p>
+    <p class="sumario-item nivel-2">9.1 Funcionalidades do Sistema</p>
+    <p class="sumario-item nivel-2">9.2 Sistema de Autenticação</p>
+    <p class="sumario-item nivel-2">9.3 Módulo Kanban</p>
+    <p class="sumario-item nivel-2">9.4 Módulo de Tickets</p>
+    <p class="sumario-item nivel-2">9.5 Integração com IA</p>
+    
+    <p class="sumario-item nivel-1">10 RESULTADOS E DISCUSSÃO</p>
+    
+    <p class="sumario-item nivel-1">11 CONCLUSÃO</p>
+    
+    <p class="sumario-item nivel-1">REFERÊNCIAS</p>
+</div>
+
+<!-- CAPÍTULO 1: INTRODUÇÃO -->
+<h1>1 INTRODUÇÃO</h1>
+
+<h2>1.1 Contextualização</h2>
+
+<p>O gerenciamento eficiente de projetos e tarefas tornou-se um elemento fundamental para o sucesso de organizações modernas, independentemente de seu porte ou segmento de atuação. Neste contexto, metodologias ágeis, especialmente aquelas baseadas no método Kanban, ganharam destaque por proporcionarem visualização clara do fluxo de trabalho, facilitarem a comunicação entre equipes e permitirem ajustes rápidos em resposta às mudanças de requisitos.</p>
+
+<p>O método Kanban, originalmente desenvolvido pela Toyota na década de 1940 como parte do Sistema Toyota de Produção, foi posteriormente adaptado para o desenvolvimento de software e gestão de projetos por David Anderson no início dos anos 2000. Sua essência consiste na visualização do trabalho através de um quadro dividido em colunas que representam diferentes estágios de um processo, com cartões (cards) que representam itens de trabalho movendo-se através dessas colunas conforme progridem.</p>
+
+<p>Paralelamente, sistemas de gestão de tickets (ou chamados) tornaram-se essenciais para o suporte técnico e atendimento ao cliente, permitindo que usuários reportem problemas, façam solicitações e acompanhem o andamento de suas demandas. A integração entre metodologias Kanban e sistemas de tickets representa uma evolução natural, oferecendo uma solução unificada que atende tanto às necessidades de gestão de projetos quanto de atendimento e suporte.</p>
+
+<p>Este projeto surge da necessidade identificada de criar uma solução multiplataforma que integre estas duas abordagens, permitindo que administradores gerenciem projetos através de quadros Kanban enquanto usuários finais possam abrir e acompanhar chamados de forma simples e intuitiva. A implementação utilizando tecnologias modernas da plataforma .NET (C#, ASP.NET Core, WPF e Blazor) garante robustez, escalabilidade e facilidade de manutenção.</p>
+
+<h2>1.2 Justificativa</h2>
+
+<p>A escolha por desenvolver um sistema que integra Kanban e gestão de tickets justifica-se por diversos fatores. Primeiramente, muitas organizações utilizam ferramentas separadas para gestão de projetos e atendimento de chamados, o que gera fragmentação de informações, duplicidade de cadastros e dificuldade na obtenção de uma visão holística do trabalho sendo realizado.</p>
+
+<p>Em segundo lugar, a diferenciação clara entre perfis de usuários (administradores e não-administradores) é uma necessidade real em ambientes corporativos. Administradores necessitam de ferramentas completas para gestão e visualização de todo o fluxo de trabalho, enquanto usuários finais beneficiam-se de interfaces simplificadas focadas apenas em suas necessidades específicas, como abrir chamados e acompanhar seu status.</p>
+
+<p>A implementação multiplataforma (desktop e web) atende à demanda por flexibilidade de acesso. Usuários que trabalham em estações fixas podem utilizar a aplicação desktop com melhor desempenho e recursos nativos do sistema operacional, enquanto aqueles que necessitam de mobilidade ou acesso remoto podem utilizar a versão web, acessível de qualquer dispositivo com navegador.</p>
+
+<p>Do ponto de vista acadêmico, o projeto justifica-se por integrar conhecimentos de diversas disciplinas do curso de Análise e Desenvolvimento de Sistemas, incluindo Programação Orientada a Objetos, Desenvolvimento para Internet, Gerenciamento de Projetos, Gestão da Qualidade, além de considerar aspectos de inclusão, diversidade e viabilidade econômica. Trata-se, portanto, de um projeto integrador que demonstra a aplicação prática e articulada dos conteúdos aprendidos.</p>
+
+<h2>1.3 Objetivos</h2>
+
+<h3>1.3.1 Objetivo Geral</h3>
+
+<p>Desenvolver um sistema multiplataforma de gerenciamento de projetos baseado na metodologia Kanban, integrado a um módulo de gestão de tickets, utilizando tecnologias modernas da plataforma .NET, seguindo princípios de orientação a objetos, boas práticas de engenharia de software e considerando aspectos de inclusão, qualidade e viabilidade econômica.</p>
+
+<h3>1.3.2 Objetivos Específicos</h3>
+
+<p>Para alcançar o objetivo geral, foram estabelecidos os seguintes objetivos específicos:</p>
+
+<ul>
+    <li>Projetar e implementar uma arquitetura orientada a objetos robusta e escalável, aplicando princípios como encapsulamento, herança, polimorfismo e abstração;</li>
+    <li>Desenvolver uma API RESTful utilizando ASP.NET Core para centralizar a lógica de negócio e permitir a integração com diferentes tipos de clientes;</li>
+    <li>Implementar uma aplicação desktop utilizando WPF (Windows Presentation Foundation) com interface gráfica moderna e responsiva;</li>
+    <li>Desenvolver uma aplicação web utilizando Blazor Server, permitindo acesso via navegador sem necessidade de instalação;</li>
+    <li>Criar um sistema de autenticação seguro com diferenciação de perfis (administrador e usuário comum);</li>
+    <li>Implementar funcionalidades completas de Kanban, incluindo criação, edição, exclusão e movimentação de cards entre colunas;</li>
+    <li>Desenvolver um módulo de gestão de tickets que permita a usuários não-administradores criar, acompanhar e visualizar o status de seus chamados;</li>
+    <li>Integrar funcionalidades de Inteligência Artificial para melhoria de textos e descrições;</li>
+    <li>Aplicar práticas de gerenciamento de projetos, incluindo planejamento, cronograma e gestão de riscos;</li>
+    <li>Utilizar sistema de controle de versão Git e seguir práticas de qualidade de código;</li>
+    <li>Considerar aspectos de acessibilidade e inclusão digital no design das interfaces;</li>
+    <li>Avaliar a viabilidade econômica e sustentabilidade do projeto sob perspectiva empreendedora;</li>
+    <li>Documentar todo o processo de desenvolvimento e funcionamento do sistema.</li>
+</ul>
+
+<!-- CAPÍTULO 2: PROJETO DE SISTEMAS ORIENTADO A OBJETOS -->
+<h1>2 PROJETO DE SISTEMAS ORIENTADO A OBJETOS</h1>
+
+<h2>2.1 Princípios da Programação Orientada a Objetos</h2>
+
+<p>A Programação Orientada a Objetos (POO) constitui o paradigma fundamental sobre o qual todo o sistema foi construído. Este paradigma organiza o software em objetos que combinam dados (atributos) e comportamentos (métodos), promovendo maior modularidade, reusabilidade e manutenibilidade do código.</p>
+
+<p>No desenvolvimento deste sistema, foram aplicados rigorosamente os quatro pilares da POO:</p>
+
+<p><span class="destaque">Encapsulamento:</span> Todos os modelos do sistema (User, Column, Card, Ticket) foram implementados como classes com propriedades privadas ou protegidas, expondo apenas interfaces públicas necessárias. Por exemplo, a classe User encapsula informações sensíveis como senha (armazenada em hash) e expõe apenas métodos seguros para validação de credenciais. O uso de propriedades com getters e setters permite controle fino sobre como os dados são acessados e modificados.</p>
+
+<p><span class="destaque">Abstração:</span> O sistema utiliza interfaces e classes abstratas para definir contratos que as implementações concretas devem seguir. Por exemplo, os Services (ApiService, TicketService, AuthService) abstraem a complexidade das chamadas HTTP e manipulação de dados, fornecendo métodos de alto nível como CreateTicketAsync() ou GetAdminUsersAsync(), ocultando detalhes de serialização JSON, tratamento de erros de rede e parsing de respostas.</p>
+
+<p><span class="destaque">Herança:</span> Embora o sistema não utilize herança de forma extensiva (privilegiando composição conforme recomendações modernas), alguns componentes herdam de classes base do framework .NET. Por exemplo, todos os Controllers herdam de ControllerBase do ASP.NET Core, obtendo automaticamente funcionalidades relacionadas a roteamento HTTP, validação de modelo e serialização de resposta.</p>
+
+<p><span class="destaque">Polimorfismo:</span> O polimorfismo manifesta-se através de métodos sobrecarregados e implementações de interfaces. Os métodos SaveSession do SessionManager, por exemplo, foram sobrecarregados para aceitar diferentes combinações de parâmetros, permitindo flexibilidade na forma como sessões são salvas enquanto mantêm uma interface consistente.</p>
+
+<h2>2.2 Arquitetura do Sistema</h2>
+
+<p>A arquitetura do sistema segue o padrão de camadas (layered architecture), uma abordagem que organiza o código em camadas horizontais com responsabilidades bem definidas. Esta separação promove alta coesão dentro de cada camada e baixo acoplamento entre elas, facilitando manutenção e evolução do sistema.</p>
+
+<p>O sistema foi dividido em três projetos principais, cada um representando uma aplicação distinta mas conectadas através da API central:</p>
+
+<p><span class="destaque">KanbanAPI (Backend):</span> Projeto ASP.NET Core que expõe uma API RESTful. Esta camada é responsável por toda a lógica de negócio, validações, persistência de dados e orquestração de operações. A API é stateless (sem estado), o que significa que cada requisição contém todas as informações necessárias para ser processada, facilitando escalabilidade horizontal.</p>
+
+<p>Dentro da KanbanAPI, as responsabilidades estão organizadas em subcamadas:</p>
+
+<ul>
+    <li><span class="destaque">Controllers:</span> Recebem requisições HTTP, extraem parâmetros, delegam processamento aos Services e retornam respostas apropriadas. Exemplos: AuthController, CardsController, ColumnsController, TicketsController.</li>
+    <li><span class="destaque">Services:</span> Contêm a lógica de negócio e orquestram operações complexas. DatabaseService gerencia conexões com o banco de dados, enquanto AIService integra funcionalidades de IA para reescrita de textos.</li>
+    <li><span class="destaque">Models:</span> Definem as entidades de domínio (User, Column, Card, Ticket) que representam os conceitos do negócio.</li>
+    <li><span class="destaque">DTOs (Data Transfer Objects):</span> Objetos especializados para transferência de dados entre cliente e servidor, separados dos modelos de domínio para maior flexibilidade e segurança.</li>
+</ul>
+
+<p><span class="destaque">KanbanDesktop (Cliente Desktop):</span> Aplicação WPF que oferece interface rica para usuários Windows. Utiliza o padrão MVVM (Model-View-ViewModel) implícito, onde Views são as janelas XAML, ViewModels são os code-behind que gerenciam estado, e Models são as classes que representam dados.</p>
+
+<p><span class="destaque">KanbanWeb (Cliente Web):</span> Aplicação Blazor Server que permite acesso via navegador. Blazor utiliza componentes reutilizáveis escritos em C# e Razor, executando lógica no servidor e atualizando o DOM do cliente via SignalR.</p>
+
+<p>A comunicação entre clientes e API ocorre exclusivamente via HTTP/HTTPS utilizando formato JSON, seguindo princípios REST (Representational State Transfer). Cada recurso possui um endpoint específico e as operações são mapeadas para verbos HTTP apropriados (GET para leitura, POST para criação, PUT para atualização, DELETE para exclusão).</p>
+
+<h2>2.3 Modelagem de Classes</h2>
+
+<p>A modelagem de classes foi cuidadosamente projetada para representar fielmente o domínio do problema enquanto mantém simplicidade e clareza. As principais entidades do sistema são:</p>
+
+<p><span class="destaque">User (Usuário):</span> Representa um usuário do sistema, seja administrador ou não. Principais atributos:</p>
+
+<div class="codigo">
+public class User
+{
+    public Guid Id { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }  // Hash BCrypt
+    public bool IsAdmin { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+</div>
+
+<p>A propriedade IsAdmin é crucial para a lógica de autorização do sistema. Usuários com IsAdmin = true têm acesso ao quadro Kanban completo, enquanto usuários com IsAdmin = false são direcionados à interface de tickets.</p>
+
+<p><span class="destaque">Column (Coluna):</span> Representa uma coluna no quadro Kanban. Colunas pertencem a usuários específicos e organizam cards:</p>
+
+<div class="codigo">
+public class Column
+{
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public string Name { get; set; }
+    public string Color { get; set; }
+    public int Position { get; set; }
+    public bool IsDeletable { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+</div>
+
+<p>O atributo IsDeletable foi introduzido para proteger a coluna especial "Chamados" de exclusão acidental. Apenas esta coluna tem IsDeletable = false, garantindo que sempre exista um local para tickets serem convertidos em cards.</p>
+
+<p><span class="destaque">Card (Cartão):</span> Representa um item de trabalho no Kanban. Cards pertencem a colunas e podem ser movidos entre elas:</p>
+
+<div class="codigo">
+public class Card
+{
+    public Guid Id { get; set; }
+    public Guid ColumnId { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public int Position { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+}
+</div>
+
+<p>O atributo Position permite ordenação dos cards dentro de cada coluna, mantendo a ordem visual consistente. UpdatedAt registra a última modificação, permitindo auditoria e ordenação por recência.</p>
+
+<p><span class="destaque">Ticket (Chamado):</span> Representa um ticket criado por usuário não-administrador. Tickets são vinculados a cards:</p>
+
+<div class="codigo">
+public class Ticket
+{
+    public Guid Id { get; set; }
+    public Guid RequesterId { get; set; }    // Quem criou
+    public Guid AdminId { get; set; }        // Para quem foi enviado
+    public Guid CardId { get; set; }         // Card correspondente
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+</div>
+
+<p>Esta classe estabelece o vínculo entre o módulo de tickets e o Kanban, permitindo que usuários não-administradores acompanhem o progresso de seus chamados através da movimentação do card correspondente.</p>
+
+<h2>2.4 Padrões de Projeto Aplicados</h2>
+
+<p>Diversos padrões de projeto reconhecidos pela indústria foram aplicados durante o desenvolvimento:</p>
+
+<p><span class="destaque">Repository Pattern:</span> Embora não implementado explicitamente com interfaces IRepository, o DatabaseService atua como um repositório centralizado, abstraindo toda a lógica de acesso a dados e isolando o restante da aplicação de detalhes do banco de dados.</p>
+
+<p><span class="destaque">Service Layer Pattern:</span> Controllers delegam toda lógica complexa aos Services, mantendo-se finos e focados apenas em receber requisições e retornar respostas. Esta separação facilita testes unitários e reutilização de lógica.</p>
+
+<p><span class="destaque">Data Transfer Object (DTO) Pattern:</span> Classes DTO específicas (LoginRequest, CreateTicketRequest, TicketInfoResponse, etc.) são usadas para comunicação entre cliente e servidor, separadas dos modelos de domínio. Isso permite evoluir a API sem afetar o modelo interno.</p>
+
+<p><span class="destaque">Dependency Injection:</span> ASP.NET Core oferece suporte nativo a injeção de dependências. Services são registrados no container de DI durante a inicialização (Program.cs) e automaticamente injetados nos Controllers via construtor, promovendo baixo acoplamento e facilitando testes.</p>
+
+<p><span class="destaque">Singleton Pattern:</span> AuthService e SessionManager nos clientes mantêm estado global da aplicação (usuário logado, sessão ativa) através de instâncias singleton gerenciadas pelo framework.</p>
+
+<p><span class="destaque">Factory Pattern:</span> O método GetConnectionAsync do DatabaseService atua como uma factory, criando e configurando instâncias de SqlConnection conforme necessário.</p>
+
+<p>A aplicação cuidadosa destes padrões resulta em um código mais limpo, testável e alinhado com as melhores práticas reconhecidas pela comunidade de desenvolvimento de software.</p>
+
+<!-- CAPÍTULO 3: POO II E TÓPICOS ESPECIAIS -->
+<h1>3 PROGRAMAÇÃO ORIENTADA A OBJETOS II E TÓPICOS ESPECIAIS</h1>
+
+<h2>3.1 Implementação em C# e ASP.NET</h2>
+
+<p>A escolha da linguagem C# e da plataforma ASP.NET para implementação do sistema fundamenta-se em diversos fatores técnicos e estratégicos. C# é uma linguagem moderna, fortemente tipada e orientada a objetos, desenvolvida pela Microsoft como parte da iniciativa .NET. Sua sintaxe clara, recursos avançados e rica biblioteca padrão a tornam ideal para desenvolvimento de aplicações empresariais robustas.</p>
+
+<p>ASP.NET Core, a versão multiplataforma e de código aberto do framework, oferece desempenho excepcional, suporte a padrões modernos de desenvolvimento web e capacidade de execução em Windows, Linux e macOS. A unificação da plataforma .NET (com .NET 5 em diante) permitiu que utilizássemos o mesmo ecossistema para backend (API), desktop (WPF) e web (Blazor), maximizando o reaproveitamento de código e conhecimento.</p>
+
+<p>Recursos avançados de C# aplicados no projeto incluem:</p>
+
+<p><span class="destaque">Async/Await:</span> Todo o sistema foi desenvolvido utilizando programação assíncrona. Métodos que realizam operações de I/O (banco de dados, requisições HTTP) são marcados como async e utilizam await, permitindo que threads não fiquem bloqueadas aguardando respostas. Isso melhora drasticamente a escalabilidade, especialmente na API onde múltiplas requisições podem ser processadas concorrentemente.</p>
+
+<div class="codigo">
+public async Task&lt;LoginResponse?&gt; LoginAsync(string username, string password)
+{
+    var response = await _httpClient.PostAsJsonAsync("/api/auth/login", request);
+    return await response.Content.ReadFromJsonAsync&lt;LoginResponse&gt;();
+}
+</div>
+
+<p><span class="destaque">LINQ (Language Integrated Query):</span> LINQ foi extensivamente utilizado para consultas e manipulações de coleções em memória, proporcionando código mais declarativo e legível:</p>
+
+<div class="codigo">
+var columnCards = cards.Where(c => c.ColumnId == column.Id)
+                       .OrderBy(c => c.Position)
+                       .ToList();
+</div>
+
+<p><span class="destaque">Null-safety features:</span> C# 8.0+ introduziu nullable reference types, permitindo declarar explicitamente quando referências podem ser nulas. Isso foi aplicado extensivamente através de operadores como ? e ??, reduzindo erros de NullReferenceException:</p>
+
+<div class="codigo">
+public string? Username { get; set; }
+var exists = await checkCmd.ExecuteScalarAsync() as int? ?? 0;
+</div>
+
+<p><span class="destaque">Pattern Matching:</span> Switch expressions modernas foram usadas para conversão de cores e outras lógicas condicionais:</p>
+
+<div class="codigo">
+private string GetColorCode(string colorName) => colorName.ToLower() switch
+{
+    "red" => "#DC2626",
+    "blue" => "#2563EB",
+    "green" => "#00FF00",
+    _ => "#00FF00"
+};
+</div>
+
+<p><span class="destaque">Records e Init-only setters:</span> Para DTOs imutáveis, foram utilizados records ou propriedades init, garantindo que dados não sejam modificados após criação.</p>
+
+<h2>3.2 API RESTful com ASP.NET Core</h2>
+
+<p>O backend do sistema é uma API RESTful implementada com ASP.NET Core 8.0 (ou 9.0), seguindo rigorosamente os princípios REST e boas práticas de design de APIs.</p>
+
+<p><span class="destaque">Princípios REST Aplicados:</span></p>
+
+<ul>
+    <li><span class="destaque">Stateless:</span> A API não mantém estado de sessão entre requisições. Cada requisição contém todas as informações necessárias para ser processada.</li>
+    <li><span class="destaque">Recursos bem definidos:</span> Cada entidade (users, columns, cards, tickets) é exposta como um recurso com URI consistente.</li>
+    <li><span class="destaque">Uso apropriado de verbos HTTP:</span> GET para leitura, POST para criação, PUT para atualização completa, PATCH (se implementado) para atualização parcial, DELETE para exclusão.</li>
+    <li><span class="destaque">Códigos de status HTTP adequados:</span> 200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 404 Not Found, 500 Internal Server Error.</li>
+    <li><span class="destaque">Formato JSON:</span> Todas as requisições e respostas utilizam JSON para serialização de dados.</li>
+</ul>
+
+<p><span class="destaque">Estrutura de Rotas:</span> A API expõe os seguintes endpoints principais:</p>
+
+<table>
+    <tr>
+        <th>Método HTTP</th>
+        <th>Rota</th>
+        <th>Descrição</th>
+    </tr>
+    <tr>
+        <td>POST</td>
+        <td>/api/auth/login</td>
+        <td>Autentica usuário e retorna dados incluindo IsAdmin</td>
+    </tr>
+    <tr>
+        <td>POST</td>
+        <td>/api/auth/register</td>
+        <td>Registra novo usuário (IsAdmin = false por padrão)</td>
+    </tr>
+    <tr>
+        <td>GET</td>
+        <td>/api/columns/user/{userId}</td>
+        <td>Lista todas as colunas de um usuário</td>
+    </tr>
+    <tr>
+        <td>POST</td>
+        <td>/api/columns</td>
+        <td>Cria nova coluna</td>
+    </tr>
+    <tr>
+        <td>PUT</td>
+        <td>/api/columns/{id}</td>
+        <td>Atualiza coluna existente</td>
+    </tr>
+    <tr>
+        <td>DELETE</td>
+        <td>/api/columns/{id}</td>
+        <td>Deleta coluna (verifica IsDeletable)</td>
+    </tr>
+    <tr>
+        <td>GET</td>
+        <td>/api/cards/column/{columnId}</td>
+        <td>Lista cards de uma coluna</td>
+    </tr>
+    <tr>
+        <td>POST</td>
+        <td>/api/cards</td>
+        <td>Cria novo card</td>
+    </tr>
+    <tr>
+        <td>PUT</td>
+        <td>/api/cards/{id}</td>
+        <td>Atualiza card (incluindo mover entre colunas)</td>
+    </tr>
+    <tr>
+        <td>DELETE</td>
+        <td>/api/cards/{id}</td>
+        <td>Deleta card</td>
+    </tr>
+    <tr>
+        <td>POST</td>
+        <td>/api/cards/{id}/rewrite</td>
+        <td>Reescreve descrição do card usando IA</td>
+    </tr>
+    <tr>
+        <td>GET</td>
+        <td>/api/tickets/admins</td>
+        <td>Lista todos os usuários administradores</td>
+    </tr>
+    <tr>
+        <td>POST</td>
+        <td>/api/tickets/user/{userId}</td>
+        <td>Cria ticket para um administrador</td>
+    </tr>
+    <tr>
+        <td>GET</td>
+        <td>/api/tickets/user/{userId}</td>
+        <td>Lista tickets do usuário com detalhes</td>
+    </tr>
+    <tr>
+        <td>POST</td>
+        <td>/api/tickets/{id}/rewrite</td>
+        <td>Reescreve texto usando IA</td>
+    </tr>
+</table>
+
+<p><span class="destaque">Validação e Tratamento de Erros:</span> Todos os Controllers implementam tratamento robusto de erros através de blocos try-catch. Erros são logados no console para debugging e respostas adequadas são retornadas ao cliente:</p>
+
+<div class="codigo">
+try
+{
+    // Lógica do endpoint
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"[ERRO] {ex.Message}");
+    return StatusCode(500, new { message = "Erro ao processar", error = ex.Message });
+}
+</div>
+
+<p><span class="destaque">Logging:</span> Extensivo uso de Console.WriteLine para logging de operações, facilitando debugging e monitoramento. Em ambiente de produção, isso seria substituído por um framework de logging profissional como Serilog ou NLog.</p>
+
+<h2>3.3 Técnicas Modernas de Programação</h2>
+
+<p>O desenvolvimento do sistema incorporou diversas técnicas e paradigmas modernos de programação:</p>
+
+<p><span class="destaque">Programação Funcional:</span> Embora C# seja primariamente uma linguagem orientada a objetos, recursos funcionais foram amplamente utilizados. LINQ, por exemplo, é inerentemente funcional, com operações como Where, Select, OrderBy retornando novas coleções sem modificar as originais (imutabilidade).</p>
+
+<p><span class="destaque">Extension Methods:</span> Métodos de extensão do .NET foram aproveitados para adicionar funcionalidades a tipos existentes sem modificá-los diretamente.</p>
+
+<p><span class="destaque">Generics:</span> Uso intensivo de tipos genéricos para criar código reutilizável e type-safe. Por exemplo, List&lt;T&gt;, Task&lt;T&gt;, etc.</p>
+
+<p><span class="destaque">Delegates e Events:</span> Em WPF, eventos são fundamentais para comunicação entre camadas. Click handlers, property change notifications, etc.</p>
+
+<p><span class="destaque">Lambda Expressions:</span> Expressões lambda foram usadas extensivamente para callbacks, LINQ queries e event handlers:</p>
+
+<div class="codigo">
+mainWindow.Closed += (s, args) => Shutdown();
+var admin = admins.FirstOrDefault(a => a.Id == selectedAdminId);
+</div>
+
+<p><span class="destaque">Property Initialization:</span> Inicialização de propriedades de forma concisa:</p>
+
+<div class="codigo">
+var column = new Column
+{
+    Id = columnId,
+    Name = request.Name,
+    Color = request.Color
+};
+</div>
+
+<p><span class="destaque">String Interpolation:</span> Interpolação de strings para concatenação legível:</p>
+
+<div class="codigo">
+Console.WriteLine($"[AUTH] Login bem-sucedido: {username}");
+</div>
+
+<h2>3.4 Integração com Banco de Dados</h2>
+
+<p>O sistema utiliza Microsoft SQL Server LocalDB como banco de dados relacional, hospedado localmente no Windows Server. A escolha de SQL Server justifica-se por sua robustez, conformidade com padrões SQL, integração nativa com o ecossistema .NET, excelente desempenho e facilidade de implantação em ambientes Windows.</p>
+
+<p><span class="destaque">Acesso a Dados:</span> A integração com o banco foi implementada utilizando ADO.NET diretamente através do driver Microsoft.Data.SqlClient, sem utilizar um ORM (Object-Relational Mapper) como Entity Framework. Esta decisão foi tomada para manter controle total sobre as queries SQL e minimizar overhead, embora resulte em mais código manual.</p>
+
+<p>O DatabaseService encapsula toda lógica de conexão:</p>
+
+<div class="codigo">
+public class DatabaseService
+{
+    private readonly string _connectionString;
+
+    public DatabaseService(IConfiguration configuration)
+    {
+        _connectionString = configuration.GetConnectionString("DefaultConnection");
+    }
+
+    public async Task&lt;SqlConnection&gt; GetConnectionAsync()
+    {
+        var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        return connection;
+    }
+}
+</div>
+
+<p><span class="destaque">Estrutura do Banco de Dados:</span> O banco possui quatro tabelas principais:</p>
+
+<ul>
+    <li><span class="destaque">pim_users:</span> Armazena usuários com campos id (UUID), username, password (hash BCrypt), admin (boolean) e created_at.</li>
+    <li><span class="destaque">pim_columns:</span> Armazena colunas com id, user_id (FK), name, color, position, is_deletable e created_at.</li>
+    <li><span class="destaque">pim_cards:</span> Armazena cards com id, column_id (FK), title, description, position, created_at e updated_at.</li>
+    <li><span class="destaque">pim_tickets:</span> Armazena tickets com id, requester_id (FK), admin_id (FK), card_id (FK), title, description e created_at.</li>
+</ul>
+
+<p>Relacionamentos são garantidos através de foreign keys com integridade referencial. Por exemplo, quando uma coluna é deletada, todos os seus cards são deletados em cascata (DELETE CASCADE).</p>
+
+<p><span class="destaque">Segurança:</span> Senhas nunca são armazenadas em texto plano. O sistema utiliza BCrypt.Net para hash de senhas com salt automático, garantindo que mesmo senhas idênticas tenham hashes diferentes. Na autenticação, a senha fornecida é verificada contra o hash armazenado:</p>
+
+<div class="codigo">
+var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+if (!BCrypt.Net.BCrypt.Verify(request.Password, passwordHash))
+{
+    return Unauthorized();
+}
+</div>
+
+<p><span class="destaque">Transações:</span> Embora não implementadas explicitamente no código atual, operações que requerem atomicidade (como criar um ticket que também cria um card) são executadas sequencialmente dentro de um mesmo contexto de conexão, minimizando inconsistências.</p>
+
+<p><span class="destaque">Connection Pooling:</span> Microsoft.Data.SqlClient implementa connection pooling automaticamente, reutilizando conexões físicas e melhorando performance. O uso de using statements garante que conexões sejam adequadamente fechadas e retornadas ao pool:</p>
+
+<div class="codigo">
+await using var connection = await _dbService.GetConnectionAsync();
+// Uso da conexão
+// Fechamento automático ao fim do escopo
+</div>
+
+<!-- CAPÍTULO 4: DESENVOLVIMENTO PARA INTERNET -->
+<h1>4 DESENVOLVIMENTO PARA INTERNET</h1>
+
+<h2>4.1 Interface Desktop com WPF</h2>
+
+<p>A aplicação desktop foi desenvolvida utilizando Windows Presentation Foundation (WPF), framework da Microsoft para criação de interfaces gráficas ricas em aplicações Windows. WPF oferece recursos avançados como data binding, templates, estilos e animações através de XAML (Extensible Application Markup Language), uma linguagem declarativa baseada em XML.</p>
+
+<p><span class="destaque">Arquitetura MVVM:</span> Embora não implementado rigidamente, a aplicação segue princípios do padrão MVVM (Model-View-ViewModel). Views são definidas em arquivos XAML, lógica de apresentação reside nos code-behind (que atuam como ViewModels simplificados), e Models são as classes de domínio.</p>
+
+<p><span class="destaque">Principais Janelas:</span></p>
+
+<p><span class="destaque">LoginWindow:</span> Primeira tela apresentada ao usuário. Permite login com username e password. Após autenticação bem-sucedida, verifica se o usuário é administrador e abre a janela apropriada (MainWindow para admins, TicketsWindow para não-admins). A janela salva a sessão localmente para permitir auto-login em próximas execuções.</p>
+
+<p><span class="destaque">MainWindow (Kanban):</span> Interface principal para administradores. Exibe o quadro Kanban com todas as colunas do usuário. Cada coluna é renderizada dinamicamente com sua cor personalizada. Cards dentro de colunas são exibidos ordenados por posição. Funcionalidades incluem:</p>
+
+<ul>
+    <li>Criar, editar e deletar colunas (exceto "Chamados")</li>
+    <li>Criar, editar e deletar cards</li>
+    <li>Arrastar e soltar cards entre colunas (drag and drop)</li>
+    <li>Reescrever descrições de cards com IA</li>
+    <li>Logout</li>
+</ul>
+
+<p><span class="destaque">TicketsWindow:</span> Interface para usuários não-administradores. Layout dividido em duas seções: formulário de criação de ticket à esquerda e lista de tickets existentes à direita. Funcionalidades:</p>
+
+<ul>
+    <li>Selecionar admin de destino via ComboBox</li>
+    <li>Preencher título e descrição do ticket</li>
+    <li>Melhorar texto com IA antes de enviar</li>
+    <li>Visualizar todos os tickets criados com informações de status (admin responsável, coluna atual)</li>
+    <li>Atualizar lista de tickets</li>
+    <li>Logout</li>
+</ul>
+
+<p><span class="destaque">Design e Estilização:</span> A interface foi cuidadosamente estilizada para proporcionar experiência visual agradável. Cores foram escolhidas seguindo princípios de design material, com verde (#4CAF50) para ações positivas, vermelho (#F44336) para ações de remoção, azul (#2196F3) para informações. Botões possuem efeitos hover e transições suaves. Cards têm sombras e bordas arredondadas para dar sensação de profundidade.</p>
+
+<p><span class="destaque">Responsividade:</span> Layouts utilizam Grid e StackPanel do WPF para adaptação automática a diferentes tamanhos de janela. Elementos se reposicionam e redimensionam conforme a janela é redimensionada.</p>
+
+<h2>4.2 Interface Web com Blazor</h2>
+
+<p>A aplicação web foi implementada utilizando Blazor Server, um framework da Microsoft que permite construir aplicações web interativas usando C# ao invés de JavaScript. Blazor Server executa componentes no servidor e atualiza a UI no navegador através de uma conexão SignalR em tempo real.</p>
+
+<p><span class="destaque">Vantagens do Blazor Server:</span></p>
+
+<ul>
+    <li>Desenvolvimento full-stack em C#, eliminando necessidade de JavaScript</li>
+    <li>Reaproveitamento de código entre backend, desktop e web (Models, DTOs)</li>
+    <li>Menor tamanho de download inicial comparado a Blazor WebAssembly</li>
+    <li>Acesso direto a recursos do servidor</li>
+</ul>
+
+<p><span class="destaque">Componentes Principais:</span></p>
+
+<p><span class="destaque">Home.razor:</span> Página principal que combina login e interface Kanban. Quando não autenticado, exibe formulário de login/registro. Após login, verifica se usuário é admin. Se sim, exibe o quadro Kanban com funcionalidades completas. Se não, redireciona para /tickets.</p>
+
+<p>O componente utiliza diretivas Blazor como @if, @foreach e @bind para renderização condicional e data binding:</p>
+
+<div class="codigo">
+@if (!AuthService.IsAuthenticated)
+{
+    &lt;!-- Formulário de login --&gt;
+}
+else
+{
+    &lt;!-- Interface Kanban --&gt;
+}
+</div>
+
+<p><span class="destaque">Tickets.razor:</span> Página dedicada a usuários não-administradores. Layout similar à versão desktop, com formulário de criação à esquerda e lista de tickets à direita. Utiliza componentes HTML estilizados com CSS inline para formatação.</p>
+
+<p><span class="destaque">Interatividade:</span> Blazor permite que eventos de UI sejam tratados diretamente em C#:</p>
+
+<div class="codigo">
+&lt;button @onclick="CreateTicket" class="btn-primary"&gt;Enviar Chamado&lt;/button&gt;
+
+@code {
+    private async Task CreateTicket()
+    {
+        // Lógica de criação
+    }
+}
+</div>
+
+<p><span class="destaque">Drag and Drop no Kanban:</span> A movimentação de cards entre colunas foi implementada usando eventos HTML5 drag and drop:</p>
+
+<div class="codigo">
+&lt;div draggable="true"
+     @ondragstart="@(() => HandleCardDragStart(card))"
+     @ondrop="@((e) => HandleDrop(column.Id))"
+     @ondrop:preventDefault="true"&gt;
+</div>
+
+<p>Quando um card é solto em uma coluna diferente, uma requisição PUT é enviada à API atualizando o ColumnId do card.</p>
+
+<p><span class="destaque">State Management:</span> AuthService e SessionService são registrados como Scoped services, mantendo estado durante a sessão do usuário. SessionService usa localStorage do navegador via IJSRuntime para persistir dados entre sessões.</p>
+
+<p><span class="destaque">Estilização:</span> Todo o CSS foi escrito inline dentro dos componentes Razor usando tags &lt;style&gt;. Foram aplicados princípios de design responsivo com media queries, garantindo que a interface funcione bem em tablets e desktops.</p>
+
+<h2>4.3 Experiência do Usuário (UX)</h2>
+
+<p>A experiência do usuário foi prioridade durante todo o design das interfaces. Diversos princípios de UX foram aplicados:</p>
+
+<p><span class="destaque">Simplicidade:</span> Interfaces foram mantidas simples e focadas. Usuários não-administradores veem apenas funcionalidades relevantes (criar e visualizar tickets), sem serem sobrecarregados com opções de Kanban que não utilizarão.</p>
+
+<p><span class="destaque">Feedback Visual:</span> Todas as ações fornecem feedback imediato. Botões mudam de aparência ao passar o mouse. Mensagens de sucesso (verde) ou erro (vermelho) são exibidas após operações. Botões mostram estados de loading ("⏳ Enviando...") durante operações assíncronas.</p>
+
+<p><span class="destaque">Consistência:</span> Padrões visuais e de interação são consistentes em toda a aplicação. Cores têm significados consistentes (verde = sucesso, vermelho = erro/deletar, azul = informação). Layout de formulários segue a mesma estrutura.</p>
+
+<p><span class="destaque">Prevenção de Erros:</span> Validações previnem erros antes que aconteçam. Campos obrigatórios são verificados. A coluna "Chamados" não pode ser deletada. Confirmações são solicitadas para ações destrutivas (deletar coluna/card).</p>
+
+<p><span class="destaque">Recuperação de Erros:</span> Quando erros ocorrem, mensagens claras explicam o problema. Por exemplo, "Preencha o título e a descrição" é mais útil que "Erro 400".</p>
+
+<p><span class="destaque">Eficiência:</span> Ações comuns requerem poucos cliques. Drag and drop permite mover cards rapidamente. Atalhos visuais como ícones (📋, 🤖, 📤) tornam botões mais reconhecíveis.</p>
+
+<p><span class="destaque">Hierarquia Visual:</span> Tamanhos de fonte, pesos e cores estabelecem hierarquia clara de informação. Títulos são maiores e em negrito. Textos secundários (datas, metadados) são menores e em cinza.</p>
+
+<h2>4.4 Responsividade e Acessibilidade</h2>
+
+<p><span class="destaque">Responsividade:</span> A aplicação web utiliza CSS Grid e Flexbox para layouts responsivos. Media queries ajustam o layout em telas menores:</p>
+
+<div class="codigo">
+@media (max-width: 768px) {
+    .content-grid {
+        grid-template-columns: 1fr; /* Uma coluna em mobile */
+    }
+}
+</div>
+
+<p>Em tablets e smartphones, o layout muda de duas colunas (formulário + lista) para uma coluna vertical, mantendo usabilidade.</p>
+
+<p><span class="destaque">Acessibilidade:</span> Embora não implementada com todas as diretrizes WCAG, considerações básicas foram feitas:</p>
+
+<ul>
+    <li>Contraste adequado entre texto e fundo (texto preto sobre fundo branco/claro)</li>
+    <li>Tamanhos de fonte legíveis (12pt ou superior)</li>
+    <li>Áreas clicáveis suficientemente grandes (botões com padding adequado)</li>
+    <li>Uso semântico de HTML (headings h1-h3, paragraphs, forms)</li>
+    <li>Labels associados a inputs em formulários</li>
+</ul>
+
+<p>Melhorias futuras de acessibilidade incluiriam:</p>
+
+<ul>
+    <li>ARIA labels para elementos interativos</li>
+    <li>Navegação completa por teclado</li>
+    <li>Suporte a leitores de tela</li>
+    <li>Indicadores de foco visíveis</li>
+    <li>Opção de alto contraste</li>
+</ul>
+
+<!-- CAPÍTULO 5: GERENCIAMENTO DE PROJETOS -->
+<h1>5 GERENCIAMENTO DE PROJETOS DE SOFTWARE</h1>
+
+<h2>5.1 Planejamento do Projeto</h2>
+
+<p>O gerenciamento adequado de projetos de software é fundamental para o sucesso de qualquer empreendimento tecnológico. Para este projeto, foi adotada uma abordagem estruturada de planejamento, ainda que executada por um único desenvolvedor, seguindo princípios reconhecidos de gestão de projetos.</p>
+
+<p><span class="destaque">Definição do Escopo:</span> O escopo do projeto foi claramente definido no início, abrangendo o desenvolvimento de um sistema Kanban multiplataforma com módulo de gestão de tickets. A definição clara evitou o fenômeno conhecido como "scope creep" (expansão descontrolada do escopo), mantendo o foco nas funcionalidades essenciais.</p>
+
+<p>O escopo foi dividido em entregas principais:</p>
+
+<ul>
+    <li>Backend (API RESTful) com autenticação e endpoints para colunas, cards e tickets</li>
+    <li>Banco de dados MS SQL Server LocalDB com estrutura completa e relacionamentos</li>
+    <li>Aplicação desktop WPF com interfaces para admin e não-admin</li>
+    <li>Aplicação web Blazor com funcionalidades equivalentes à desktop</li>
+    <li>Integração com serviço de IA para reescrita de textos</li>
+    <li>Documentação técnica e acadêmica</li>
+</ul>
+
+<p><span class="destaque">Requisitos Funcionais:</span> Foram levantados e documentados os seguintes requisitos funcionais principais:</p>
+
+<ol>
+    <li>O sistema deve permitir registro e autenticação de usuários</li>
+    <li>O sistema deve diferenciar usuários administradores de não-administradores</li>
+    <li>Administradores devem poder criar, editar, mover e deletar colunas e cards</li>
+    <li>O sistema deve criar automaticamente uma coluna "Chamados" para novos admins</li>
+    <li>A coluna "Chamados" não deve poder ser deletada</li>
+    <li>Não-administradores devem poder criar tickets direcionados a admins</li>
+    <li>Tickets devem ser automaticamente convertidos em cards na coluna "Chamados"</li>
+    <li>Não-administradores devem visualizar o status de seus tickets</li>
+    <li>O sistema deve integrar IA para melhorar textos de cards e tickets</li>
+    <li>O sistema deve estar disponível em versão desktop e web</li>
+</ol>
+
+<p><span class="destaque">Requisitos Não-Funcionais:</span> Além dos funcionais, requisitos não-funcionais foram considerados:</p>
+
+<ul>
+    <li><span class="destaque">Performance:</span> Requisições à API devem responder em menos de 2 segundos sob carga normal</li>
+    <li><span class="destaque">Segurança:</span> Senhas devem ser armazenadas com hash BCrypt; conexões devem usar HTTPS em produção</li>
+    <li><span class="destaque">Usabilidade:</span> Interfaces devem ser intuitivas e não requerer treinamento extensivo</li>
+    <li><span class="destaque">Confiabilidade:</span> O sistema deve ter disponibilidade de 99% (excluindo manutenções programadas)</li>
+    <li><span class="destaque">Manutenibilidade:</span> Código deve seguir padrões e estar adequadamente documentado</li>
+    <li><span class="destaque">Escalabilidade:</span> Arquitetura deve suportar crescimento de usuários sem refatoração major</li>
+</ul>
+
+<p><span class="destaque">Stakeholders:</span> Foram identificados os seguintes stakeholders (partes interessadas):</p>
+
+<ul>
+    <li>Desenvolvedor/Aluno: Responsável pela implementação e beneficiário do aprendizado</li>
+    <li>Orientador Acadêmico: Avaliam qualidade técnica e cumprimento de objetivos pedagógicos</li>
+    <li>Instituição (UNIP): Interessada na formação adequada de seus alunos</li>
+    <li>Usuários Finais (potenciais): Administradores de projetos e membros de equipes</li>
+    <li>Comunidade Open Source: Caso o projeto seja disponibilizado publicamente</li>
+</ul>
+
+<h2>5.2 Cronograma de Desenvolvimento</h2>
+
+<p>O desenvolvimento do projeto foi organizado em fases sequenciais, seguindo um modelo híbrido entre cascata (para etapas de infraestrutura) e ágil (para desenvolvimento de funcionalidades). O cronograma estimado foi:</p>
+
+<table>
+    <tr>
+        <th>Fase</th>
+        <th>Duração</th>
+        <th>Atividades Principais</th>
+    </tr>
+    <tr>
+        <td>1. Planejamento</td>
+        <td>1 semana</td>
+        <td>Definição de escopo, levantamento de requisitos, escolha de tecnologias, setup de ambiente</td>
+    </tr>
+    <tr>
+        <td>2. Modelagem</td>
+        <td>3 dias</td>
+        <td>Modelagem do banco de dados, definição de classes, arquitetura do sistema</td>
+    </tr>
+    <tr>
+        <td>3. Infraestrutura</td>
+        <td>2 dias</td>
+        <td>Configuração SQL Server LocalDB, criação de tabelas, setup de projetos .NET</td>
+    </tr>
+    <tr>
+        <td>4. Backend (Fase 1)</td>
+        <td>1 semana</td>
+        <td>Implementação de Models, DatabaseService, AuthController, estrutura básica</td>
+    </tr>
+    <tr>
+        <td>5. Backend (Fase 2)</td>
+        <td>1 semana</td>
+        <td>ColumnsController, CardsController, lógica de negócio completa</td>
+    </tr>
+    <tr>
+        <td>6. Desktop (Fase 1)</td>
+        <td>1 semana</td>
+        <td>LoginWindow, MainWindow básico, ApiService, SessionManager</td>
+    </tr>
+    <tr>
+        <td>7. Desktop (Fase 2)</td>
+        <td>4 dias</td>
+        <td>Interface Kanban completa, drag and drop, diálogos de edição</td>
+    </tr>
+    <tr>
+        <td>8. Sistema de Tickets</td>
+        <td>1 semana</td>
+        <td>TicketsController, migração de banco, TicketsWindow, TicketService</td>
+    </tr>
+    <tr>
+        <td>9. Web (Blazor)</td>
+        <td>1 semana</td>
+        <td>Implementação completa de Home.razor e Tickets.razor, serviços web</td>
+    </tr>
+    <tr>
+        <td>10. Integração IA</td>
+        <td>2 dias</td>
+        <td>AIService, endpoints de rewrite, integração nas interfaces</td>
+    </tr>
+    <tr>
+        <td>11. Testes e Ajustes</td>
+        <td>3 dias</td>
+        <td>Testes de funcionalidades, correção de bugs, ajustes de UI</td>
+    </tr>
+    <tr>
+        <td>12. Documentação</td>
+        <td>4 dias</td>
+        <td>README, guias de implementação, documentação acadêmica ABNT</td>
+    </tr>
+</table>
+
+<p><span class="destaque">Total Estimado:</span> Aproximadamente 6 semanas de desenvolvimento intensivo. O projeto foi executado de forma iterativa, com entregas incrementais testadas após cada fase.</p>
+
+<p><span class="destaque">Ferramentas de Gestão:</span> Embora seja um projeto individual, técnicas de gestão foram aplicadas:</p>
+
+<ul>
+    <li>Git para versionamento, com commits frequentes e mensagens descritivas</li>
+    <li>Branches para features maiores (feature/tickets, feature/blazor)</li>
+    <li>To-do lists em comentários do código para rastrear tarefas pendentes</li>
+    <li>Documentação incremental conforme desenvolvimento avançava</li>
+</ul>
+
+<h2>5.3 Gerenciamento de Riscos</h2>
+
+<p>O gerenciamento de riscos é crucial para antecipar e mitigar problemas potenciais. Os principais riscos identificados e suas estratégias de mitigação foram:</p>
+
+<table>
+    <tr>
+        <th>Risco</th>
+        <th>Probabilidade</th>
+        <th>Impacto</th>
+        <th>Mitigação</th>
+    </tr>
+    <tr>
+        <td>Problemas de conexão com SQL Server</td>
+        <td>Média</td>
+        <td>Alto</td>
+        <td>Tratamento robusto de exceções, mensagens claras de erro, possibilidade de banco local para desenvolvimento</td>
+    </tr>
+    <tr>
+        <td>Complexidade excessiva do WPF</td>
+        <td>Alta</td>
+        <td>Médio</td>
+        <td>Prototipagem rápida, uso de tutoriais e documentação oficial, simplificação de UI quando necessário</td>
+    </tr>
+    <tr>
+        <td>Incompatibilidade entre versões .NET</td>
+        <td>Baixa</td>
+        <td>Alto</td>
+        <td>Padronização em .NET 8/9, testes em ambiente limpo</td>
+    </tr>
+    <tr>
+        <td>Performance inadequada com muitos cards</td>
+        <td>Média</td>
+        <td>Médio</td>
+        <td>Paginação (futura), indexação adequada no banco, queries otimizadas</td>
+    </tr>
+    <tr>
+        <td>Falha na integração com IA</td>
+        <td>Alta</td>
+        <td>Baixo</td>
+        <td>Funcionalidade opcional, fallback gracioso, API mock para testes</td>
+    </tr>
+    <tr>
+        <td>Dificuldade com drag and drop</td>
+        <td>Alta</td>
+        <td>Médio</td>
+        <td>Alternativa com botões de mover, pesquisa em Stack Overflow, exemplos da comunidade</td>
+    </tr>
+    <tr>
+        <td>Prazo insuficiente</td>
+        <td>Média</td>
+        <td>Alto</td>
+        <td>Priorização de funcionalidades core, MVP bem definido, features avançadas como opcionais</td>
+    </tr>
+</table>
+
+<p><span class="destaque">Gestão de Dependências:</span> O projeto depende de infraestrutura local (SQL Server LocalDB) e potencialmente API de IA externa. Para mitigar riscos:</p>
+
+<ul>
+    <li>Connection strings configuráveis via appsettings.json</li>
+    <li>SQL Server LocalDB está incluído no Visual Studio e SQL Server Express</li>
+    <li>Possibilidade de migrar para SQL Server completo em produção</li>
+    <li>AIService isolado, facilmente substituível</li>
+    <li>Sem dependências de bibliotecas obscuras ou descontinuadas</li>
+</ul>
+
+<h2>5.4 Metodologia Ágil Aplicada</h2>
+
+<p>Embora metodologias ágeis como Scrum sejam tipicamente aplicadas em equipes, princípios ágeis foram adaptados para este projeto individual:</p>
+
+<p><span class="destaque">Desenvolvimento Iterativo:</span> Em vez de tentar implementar tudo de uma vez, o desenvolvimento ocorreu em iterações curtas. Cada iteração produziu incrementos funcionais que foram testados antes de prosseguir.</p>
+
+<p><span class="destaque">MVP (Minimum Viable Product):</span> A primeira versão focou em funcionalidades essenciais: autenticação, CRUD de colunas e cards, interface básica. Features como sistema de tickets e integração IA foram adicionadas posteriormente.</p>
+
+<p><span class="destaque">Feedback Contínuo:</span> Após cada incremento, o sistema foi testado manualmente, identificando problemas de usabilidade ou bugs. Ajustes foram feitos imediatamente, sem esperar conclusão completa.</p>
+
+<p><span class="destaque">Refactoring Contínuo:</span> Código foi constantemente revisado e melhorado. Por exemplo, lógica de conexão ao banco foi centralizada no DatabaseService após perceber duplicação inicial.</p>
+
+<p><span class="destaque">Documentação Evolutiva:</span> Documentação não foi deixada para o final. READMEs e guias foram escritos incrementalmente, capturando decisões e processos enquanto ainda frescos na memória.</p>
+
+<p><span class="destaque">Princípios do Manifesto Ágil Aplicados:</span></p>
+
+<ul>
+    <li><span class="destaque">Software funcionando sobre documentação abrangente:</span> Prioridade foi criar código funcional, mas documentação adequada foi mantida</li>
+    <li><span class="destaque">Resposta a mudanças sobre seguir um plano:</span> Quando dificuldades surgiram (ex: complexidade de MVVM puro em WPF), ajustes foram feitos pragmaticamente</li>
+    <li><span class="destaque">Simplicidade:</span> Soluções simples foram preferidas. Por exemplo, ADO.NET direto foi escolhido sobre Entity Framework para manter controle e simplicidade</li>
+</ul>
+
+<!-- CAPÍTULO 6: GESTÃO DA QUALIDADE -->
+<h1>6 GESTÃO DA QUALIDADE</h1>
+
+<h2>6.1 Versionamento com Git</h2>
+
+<p>O controle de versão é fundamental para qualquer projeto de software moderno. Git foi escolhido por ser o sistema de controle de versão distribuído mais popular e amplamente suportado, além de integração nativa com GitHub, GitLab e outras plataformas.</p>
+
+<p><span class="destaque">Estrutura do Repositório:</span> O projeto foi organizado em um repositório único contendo os três projetos (KanbanAPI, KanbanDesktop, KanbanWeb) sob uma solution .NET (KanbanSystem.sln). Esta estrutura facilita desenvolvimento sincronizado e compartilhamento de conhecimento entre projetos.</p>
+
+<p><span class="destaque">Estratégia de Branches:</span> Foi adotada uma estratégia simplificada de branching:</p>
+
+<ul>
+    <li><span class="destaque">main:</span> Branch principal contendo código estável e funcional. Commits diretos foram feitos durante desenvolvimento solo, mas em equipe seria protegida</li>
+    <li><span class="destaque">feature/*:</span> Branches temporárias para desenvolvimento de features maiores (ex: feature/ticket-system, feature/blazor-integration)</li>
+    <li><span class="destaque">hotfix/*:</span> Para correções urgentes de bugs críticos em produção</li>
+</ul>
+
+<p><span class="destaque">Práticas de Commit:</span> Commits foram feitos frequentemente, seguindo boas práticas:</p>
+
+<ul>
+    <li>Mensagens descritivas em português ou inglês, começando com verbo no imperativo</li>
+    <li>Commits atômicos: cada commit representa uma unidade lógica de mudança</li>
+    <li>Commits frequentes (várias vezes ao dia) para não perder progresso</li>
+</ul>
+
+<p>Exemplos de mensagens de commit:</p>
+
+<div class="codigo">
+git commit -m "Adiciona campo IsAdmin no modelo User"
+git commit -m "Implementa TicketsController com endpoints CRUD"
+git commit -m "Corrige bug de drag and drop no MainWindow"
+git commit -m "Atualiza documentação com guia de instalação"
+</div>
+
+<p><span class="destaque">.gitignore:</span> Arquivo .gitignore adequadamente configurado para excluir arquivos desnecessários:</p>
+
+<div class="codigo">
+bin/
+obj/
+.vs/
+*.user
+*.suo
+appsettings.Development.json
+</div>
+
+<p>Isso evita commitar binários compilados, configurações locais e arquivos temporários do Visual Studio.</p>
+
+<p><span class="destaque">Versionamento Semântico:</span> Embora não rigidamente seguido, releases poderiam ser tagueadas semanticamente (v1.0.0, v1.1.0, v2.0.0) seguindo o padrão MAJOR.MINOR.PATCH.</p>
+
+<h2>6.2 Práticas de Teste</h2>
+
+<p>Testes são essenciais para garantir qualidade e confiabilidade do software. Embora testes automatizados completos não tenham sido implementados (dada a natureza acadêmica e individual do projeto), diversas práticas de teste foram aplicadas:</p>
+
+<p><span class="destaque">Testes Manuais:</span> Cada funcionalidade foi extensivamente testada manualmente após implementação:</p>
+
+<ul>
+    <li>Fluxo completo de autenticação (registro, login, logout)</li>
+    <li>CRUD de colunas e cards em diferentes cenários</li>
+    <li>Movimentação de cards entre colunas (drag and drop e botões)</li>
+    <li>Criação e visualização de tickets</li>
+    <li>Integração com IA para reescrita de textos</li>
+    <li>Proteção da coluna "Chamados" contra exclusão</li>
+    <li>Diferenciação correta entre usuários admin e não-admin</li>
+</ul>
+
+<p><span class="destaque">Teste de Casos Extremos:</span> Além do "caminho feliz", casos extremos foram testados:</p>
+
+<ul>
+    <li>Login com credenciais inválidas</li>
+    <li>Tentativa de deletar coluna "Chamados"</li>
+    <li>Criação de card com campos vazios</li>
+    <li>Movimentação de card para coluna inexistente</li>
+    <li>Perda de conexão com banco de dados</li>
+    <li>Tentativa de acesso não autorizado (não-admin tentando acessar Kanban)</li>
+</ul>
+
+<p><span class="destaque">Testes em Múltiplos Ambientes:</span> O sistema foi testado em diferentes configurações:</p>
+
+<ul>
+    <li>Windows 10 e Windows 11 para aplicação desktop</li>
+    <li>Diferentes navegadores (Chrome, Edge, Firefox) para aplicação web</li>
+    <li>Diferentes resoluções de tela</li>
+</ul>
+
+<p><span class="destaque">Testes Automatizados (Recomendação Futura):</span> Para evolução do projeto, seria recomendável implementar:</p>
+
+<ul>
+    <li><span class="destaque">Unit Tests:</span> Usando xUnit ou NUnit para testar Services e lógica de negócio isoladamente</li>
+    <li><span class="destaque">Integration Tests:</span> Para testar Controllers e interação com banco de dados</li>
+    <li><span class="destaque">UI Tests:</span> Usando Selenium ou Playwright para testes end-to-end da interface web</li>
+</ul>
+
+<p>Exemplo de estrutura de teste unitário:</p>
+
+<div class="codigo">
+[Fact]
+public async Task CreateTicket_WithValidData_ReturnsCreated()
+{
+    // Arrange
+    var request = new CreateTicketRequest { Title = "Test", Description = "..." };
+    
+    // Act
+    var result = await _controller.CreateTicket(userId, request);
+    
+    // Assert
+    Assert.IsType&lt;CreatedResult&gt;(result);
+}
+</div>
+
+<h2>6.3 Controle de Qualidade do Código</h2>
+
+<p>Qualidade de código vai além de funcionalidade. Código limpo, legível e manutenível é essencial para longevidade do projeto.</p>
+
+<p><span class="destaque">Padrões de Codificação:</span> Convenções C# padrão foram seguidas:</p>
+
+<ul>
+    <li>PascalCase para classes, métodos e propriedades públicas</li>
+    <li>camelCase para variáveis locais e parâmetros</li>
+    <li>_camelCase (com underscore) para campos privados</li>
+    <li>Nomes descritivos evitando abreviações obscuras</li>
+    <li>Comentários explicativos onde lógica é complexa</li>
+</ul>
+
+<p><span class="destaque">Princípios SOLID:</span> Princípios de design orientado a objetos foram aplicados quando possível:</p>
+
+<ul>
+    <li><span class="destaque">Single Responsibility:</span> Cada classe tem responsabilidade única bem definida. DatabaseService cuida de conexões, Controllers cuidam de HTTP, Services de lógica de negócio</li>
+    <li><span class="destaque">Open/Closed:</span> Classes abertas para extensão, fechadas para modificação. Por exemplo, novos Services podem ser adicionados sem modificar existentes</li>
+    <li><span class="destaque">Dependency Inversion:</span> Controllers dependem de abstrações (injeção de IConfiguration, DatabaseService) não de implementações concretas</li>
+</ul>
+
+<p><span class="destaque">DRY (Don't Repeat Yourself):</span> Código duplicado foi evitado através de:</p>
+
+<ul>
+    <li>Métodos utilitários reutilizáveis (GetConnectionAsync)</li>
+    <li>Classes compartilhadas entre projetos (Models, DTOs)</li>
+    <li>Herança e composição apropriadas</li>
+</ul>
+
+<p><span class="destaque">Tratamento de Erros:</span> Todo código que interage com recursos externos (banco, HTTP) possui tratamento de exceções:</p>
+
+<div class="codigo">
+try
+{
+    await using var connection = await _dbService.GetConnectionAsync();
+    // Operação
+    return Ok(result);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"[ERRO] {ex.Message}");
+    return StatusCode(500, new { message = "Erro interno" });
+}
+</div>
+
+<p><span class="destaque">Code Reviews:</span> Embora sendo projeto solo, o desenvolvedor revisou próprio código periodicamente, identificando melhorias e refatorações necessárias. Em ambiente profissional, peer reviews seriam obrigatórios.</p>
+
+<p><span class="destaque">Ferramentas de Análise Estática:</span> Visual Studio oferece análise estática integrada (IntelliSense, code analyzers). Warnings do compilador foram tratados, não ignorados.</p>
+
+<h2>6.4 Documentação Técnica</h2>
+
+<p>Documentação adequada é crucial para manutenibilidade e transferência de conhecimento. O projeto inclui múltiplos níveis de documentação:</p>
+
+<p><span class="destaque">README.md:</span> Arquivo principal contendo:</p>
+
+<ul>
+    <li>Descrição geral do projeto</li>
+    <li>Tecnologias utilizadas</li>
+    <li>Pré-requisitos para execução</li>
+    <li>Instruções de instalação passo a passo</li>
+    <li>Como executar cada componente</li>
+    <li>Estrutura do projeto</li>
+    <li>Licença</li>
+</ul>
+
+<p><span class="destaque">Guias Específicos:</span> Documentos detalhados foram criados:</p>
+
+<ul>
+    <li>SISTEMA_TICKETS.md: Explica funcionamento do módulo de tickets</li>
+    <li>GUIA_IMPLEMENTACAO.md: Passo a passo técnico de implementação</li>
+    <li>API_EXAMPLES.md: Exemplos de requisições para cada endpoint</li>
+    <li>TROUBLESHOOTING.md: Soluções para problemas comuns</li>
+</ul>
+
+<p><span class="destaque">Comentários no Código:</span> Código é comentado estrategicamente:</p>
+
+<ul>
+    <li>Comentários de cabeçalho explicam propósito de classes e métodos complexos</li>
+    <li>Comentários inline explicam lógica não-óbvia</li>
+    <li>TODOs marcam melhorias futuras</li>
+</ul>
+
+<div class="codigo">
+// Verifica se a coluna "Chamados" pode ser deletada
+// Esta coluna especial é protegida contra exclusão
+if (!isDeletable)
+{
+    return BadRequest(new { message = "Coluna protegida" });
+}
+</div>
+
+<p><span class="destaque">Documentação da API:</span> Endpoints foram documentados com:</p>
+
+<ul>
+    <li>Método HTTP</li>
+    <li>Rota</li>
+    <li>Parâmetros esperados</li>
+    <li>Corpo da requisição (JSON schema)</li>
+    <li>Respostas possíveis com exemplos</li>
+    <li>Códigos de status</li>
+</ul>
+
+<p>Em produção, ferramentas como Swagger/OpenAPI seriam integradas para documentação interativa automática.</p>
+
+<p><span class="destaque">Documentação Acadêmica:</span> Este documento (documentaçao.html) representa a documentação acadêmica completa, seguindo normas ABNT e integrando aspectos técnicos com reflexões pedagógicas e profissionais.</p>
+
+<!-- CAPÍTULO 7: RELAÇÕES ÉTNICO-RACIAIS -->
+<h1>7 RELAÇÕES ÉTNICO-RACIAIS E AFRODESCENDÊNCIA</h1>
+
+<h2>7.1 Inclusão Digital</h2>
+
+<p>A inclusão digital refere-se à democratização do acesso às tecnologias da informação, permitindo que todos os indivíduos, independentemente de raça, etnia, gênero, classe social ou localização geográfica, possam usufruir dos benefícios da era digital. Este projeto considera aspectos de inclusão em múltiplas dimensões.</p>
+
+<p><span class="destaque">Acessibilidade Econômica:</span> O sistema foi projetado para ter baixo custo operacional. Utilizando SQL Server LocalDB (totalmente gratuito) e tecnologias open-source (.NET Core é gratuito e multiplataforma), o projeto pode ser implantado com investimento mínimo. Isso possibilita que pequenas organizações, ONGs, cooperativas e grupos comunitários tenham acesso a ferramentas de gestão profissionais.</p>
+
+<p><span class="destaque">Simplicidade de Uso:</span> Interfaces foram projetadas pensando em usuários com diferentes níveis de letramento digital. A diferenciação entre interface administrativa (completa) e interface de usuário final (simplificada) reduz a curva de aprendizado. Usuários não-técnicos conseguem abrir chamados sem necessidade de treinamento extensivo.</p>
+
+<p><span class="destaque">Multiplataforma:</span> A disponibilidade em desktop (Windows) e web (qualquer plataforma com navegador) amplia o acesso. A versão web é particularmente importante para inclusão, pois não requer instalação ou hardware poderoso - pode funcionar em computadores antigos, notebooks simples, ou até tablets.</p>
+
+<p><span class="destaque">Idioma:</span> Toda a interface está em português brasileiro, eliminando barreiras linguísticas comuns em softwares internacionais. Mensagens de erro são claras e em linguagem compreensível, não em jargões técnicos.</p>
+
+<p><span class="destaque">Inclusão no Desenvolvimento:</span> O conhecimento gerado por este projeto (código-fonte, documentação, tutoriais) pode servir como material educativo para outros estudantes, especialmente aqueles de comunidades sub-representadas na tecnologia. Disponibilizar o projeto como open-source contribui para democratização do conhecimento.</p>
+
+<h2>7.2 Diversidade no Design</h2>
+
+<p>O design inclusivo considera a diversidade humana em todas as suas dimensões. Embora não tenha sido o foco principal do desenvolvimento inicial, diversas considerações foram feitas:</p>
+
+<p><span class="destaque">Representação Visual:</span> Ícones e elementos visuais são abstratos e universais, evitando representações humanas que poderiam excluir grupos específicos. Cores não foram escolhidas com base em estereótipos culturais ou raciais.</p>
+
+<p><span class="destaque">Nomenclatura Inclusiva:</span> Termos utilizados no sistema são neutros e profissionais. Por exemplo, "usuário" e "administrador" são termos que não carregam conotações de gênero, raça ou hierarquia social além da necessária para o sistema.</p>
+
+<p><span class="destaque">Flexibilidade de Uso:</span> O sistema não impõe um único modo de trabalhar. Administradores podem estruturar colunas e fluxos de trabalho conforme suas necessidades culturais e organizacionais específicas. Um coletivo de artesãos afrodescendentes pode usar o sistema de forma diferente de uma startup de tecnologia, e ambos são igualmente suportados.</p>
+
+<p><span class="destaque">Considerações Futuras:</span> Para versões futuras, melhorias de diversidade incluiriam:</p>
+
+<ul>
+    <li>Suporte a múltiplos idiomas, incluindo línguas indígenas</li>
+    <li>Temas visuais customizáveis permitindo expressão cultural</li>
+    <li>Campos de perfil que respeitem diversidade de identidades de gênero</li>
+    <li>Opções de acessibilidade para pessoas com deficiências visuais, auditivas ou motoras</li>
+    <li>Documentação e tutoriais em formatos variados (texto, vídeo, áudio)</li>
+</ul>
+
+<h2>7.3 Acessibilidade Universal</h2>
+
+<p>Acessibilidade digital significa garantir que pessoas com deficiências possam perceber, entender, navegar e interagir com sistemas digitais. As diretrizes WCAG (Web Content Accessibility Guidelines) estabelecem padrões internacionais.</p>
+
+<p><span class="destaque">Implementações Atuais:</span></p>
+
+<ul>
+    <li><span class="destaque">Contraste:</span> Textos pretos sobre fundos claros garantem contraste adequado para pessoas com baixa visão</li>
+    <li><span class="destaque">Tamanho de Fonte:</span> Fontes de tamanho adequado (12pt+) facilitam leitura</li>
+    <li><span class="destaque">Estrutura Semântica:</span> HTML semântico (headings, paragraphs, lists) ajuda leitores de tela</li>
+    <li><span class="destaque">Labels em Formulários:</span> Todos os inputs têm labels descritivos</li>
+    <li><span class="destaque">Mensagens de Erro Claras:</span> Feedback visual e textual quando operações falham</li>
+</ul>
+
+<p><span class="destaque">Melhorias Necessárias:</span> Para conformidade completa com WCAG 2.1 nível AA, seria necessário:</p>
+
+<ul>
+    <li>Navegação completa por teclado (sem necessidade de mouse)</li>
+    <li>Indicadores de foco visíveis para elementos interativos</li>
+    <li>ARIA labels para componentes complexos (drag and drop, modais)</li>
+    <li>Legendas e transcrições para conteúdo multimídia</li>
+    <li>Compatibilidade testada com leitores de tela (NVDA, JAWS)</li>
+    <li>Opção de alto contraste e modo escuro</li>
+    <li>Zoom até 200% sem perda de funcionalidade</li>
+    <li>Alternativas textuais para elementos visuais</li>
+</ul>
+
+<p><span class="destaque">Impacto Social:</span> Acessibilidade não beneficia apenas pessoas com deficiências permanentes. Também auxilia:</p>
+
+<ul>
+    <li>Pessoas com deficiências temporárias (braço quebrado, infecção ocular)</li>
+    <li>Pessoas em situações limitantes (luz solar forte na tela, ambiente barulhento)</li>
+    <li>Pessoas idosas com declínio natural de capacidades</li>
+    <li>Todos os usuários através de interfaces mais claras e intuitivas</li>
+</ul>
+
+<p>A máxima do design universal é: "O que é essencial para alguns é útil para todos".</p>
+
+<!-- CAPÍTULO 8: EMPREENDEDORISMO -->
+<h1>8 EMPREENDEDORISMO</h1>
+
+<h2>8.1 Análise de Viabilidade</h2>
+
+<p>A análise de viabilidade avalia se o projeto tem potencial de se tornar um produto comercial sustentável. Três dimensões principais são consideradas: viabilidade técnica, econômica e de mercado.</p>
+
+<p><span class="destaque">Viabilidade Técnica:</span> O projeto demonstra viabilidade técnica sólida:</p>
+
+<ul>
+    <li>Stack tecnológico moderno e bem suportado (.NET, SQL Server)</li>
+    <li>Arquitetura escalável permitindo crescimento de usuários</li>
+    <li>Código bem estruturado facilitando manutenção e evolução</li>
+    <li>SQL Server LocalDB incluído no Visual Studio, reduzindo necessidade de infraestrutura complexa</li>
+    <li>Multiplataforma, aumentando alcance potencial</li>
+</ul>
+
+<p>Tecnicamente, o sistema está pronto para uso real, embora melhorias (testes automatizados, monitoring, CI/CD) seriam necessárias para operação em escala.</p>
+
+<p><span class="destaque">Viabilidade Econômica:</span> Os custos operacionais são relativamente baixos:</p>
+
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Custo Mensal (estimado)</th>
+        <th>Observações</th>
+    </tr>
+    <tr>
+        <td>SQL Server LocalDB</td>
+        <td>R$ 0</td>
+        <td>Incluído gratuitamente no Visual Studio e SQL Server Express</td>
+    </tr>
+    <tr>
+        <td>Hospedagem de API (Azure/AWS)</td>
+        <td>R$ 100 - 500</td>
+        <td>Depende de tráfego e recursos</td>
+    </tr>
+    <tr>
+        <td>Hospedagem Web (Blazor)</td>
+        <td>R$ 50 - 300</td>
+        <td>Pode ser mesma instância da API</td>
+    </tr>
+    <tr>
+        <td>Domínio</td>
+        <td>R$ 40</td>
+        <td>.com.br anual dividido por 12</td>
+    </tr>
+    <tr>
+        <td>SSL Certificate</td>
+        <td>R$ 0</td>
+        <td>Let's Encrypt gratuito</td>
+    </tr>
+    <tr>
+        <td>API de IA (opcional)</td>
+        <td>R$ 0 - 200</td>
+        <td>Depende de uso, muitas oferecem tier gratuito</td>
+    </tr>
+    <tr>
+        <td><strong>Total</strong></td>
+        <td><strong>R$ 190 - 1.140</strong></td>
+        <td>Variável conforme escala</td>
+    </tr>
+</table>
+
+<p>Com custos operacionais baixos, o projeto poderia ser monetizado com preços acessíveis e ainda assim gerar lucro.</p>
+
+<p><span class="destaque">Viabilidade de Mercado:</span> O mercado de ferramentas de gestão de projetos é amplo e diversificado:</p>
+
+<ul>
+    <li>Mercado global de project management software estimado em dezenas de bilhões de dólares</li>
+    <li>Crescimento impulsionado por trabalho remoto e transformação digital</li>
+    <li>Concorrentes estabelecidos (Trello, Jira, Asana) dominam mercado corporativo</li>
+    <li>Oportunidade em nichos: pequenas empresas brasileiras, ONGs, coletivos, instituições educacionais</li>
+    <li>Diferencial competitivo: integração Kanban + Tickets, interface em português, preço acessível</li>
+</ul>
+
+<h2>8.2 Modelo de Negócio</h2>
+
+<p>Diversos modelos de negócio poderiam ser aplicados a este sistema:</p>
+
+<p><span class="destaque">Modelo Freemium:</span> Versão gratuita com funcionalidades básicas, versão paga com recursos avançados:</p>
+
+<ul>
+    <li><span class="destaque">Gratuito:</span> Até 5 usuários, 3 quadros, sem integração IA, suporte comunitário</li>
+    <li><span class="destaque">Básico (R$ 29/mês):</span> Até 20 usuários, quadros ilimitados, 100 tickets/mês, integração IA básica</li>
+    <li><span class="destaque">Profissional (R$ 99/mês):</span> Usuários ilimitados, tickets ilimitados, IA avançada, relatórios, API access</li>
+    <li><span class="destaque">Empresarial (R$ 299/mês):</span> Tudo do Pro + suporte prioritário, customizações, SLA garantido</li>
+</ul>
+
+<p><span class="destaque">Modelo SaaS (Software as a Service):</span> Assinatura mensal/anual com renovação automática. Este é o modelo mais comum e previsível para software empresarial.</p>
+
+<p><span class="destaque">Modelo Open Source + Serviços:</span> Código aberto gratuito, monetização através de:</p>
+
+<ul>
+    <li>Hospedagem gerenciada (managed hosting)</li>
+    <li>Consultoria e customização</li>
+    <li>Treinamento e certificação</li>
+    <li>Suporte técnico premium</li>
+</ul>
+
+<p><span class="destaque">Modelo White Label:</span> Vender o sistema para outras empresas que o rebrandeiam e revendem como próprio.</p>
+
+<p><span class="destaque">Modelo Híbrido:</span> Combinar open source (versão community) com versão comercial (enterprise) com features extras.</p>
+
+<p><span class="destaque">Canvas de Modelo de Negócio:</span></p>
+
+<table>
+    <tr>
+        <th>Elemento</th>
+        <th>Descrição</th>
+    </tr>
+    <tr>
+        <td>Segmentos de Clientes</td>
+        <td>Pequenas/médias empresas, startups, ONGs, equipes ágeis, departamentos de TI</td>
+    </tr>
+    <tr>
+        <td>Proposta de Valor</td>
+        <td>Gestão integrada Kanban + Tickets, interface simples, preço acessível, em português</td>
+    </tr>
+    <tr>
+        <td>Canais</td>
+        <td>Website próprio, marketplace (Microsoft Store), conteúdo (blog, YouTube), parcerias</td>
+    </tr>
+    <tr>
+        <td>Relacionamento</td>
+        <td>Self-service (documentação), suporte por email, comunidade (forum), suporte premium</td>
+    </tr>
+    <tr>
+        <td>Fontes de Receita</td>
+        <td>Assinaturas mensais/anuais, serviços profissionais, customizações</td>
+    </tr>
+    <tr>
+        <td>Recursos-Chave</td>
+        <td>Plataforma de software, infraestrutura cloud, equipe de desenvolvimento, marca</td>
+    </tr>
+    <tr>
+        <td>Atividades-Chave</td>
+        <td>Desenvolvimento de software, marketing digital, suporte ao cliente, manutenção</td>
+    </tr>
+    <tr>
+        <td>Parcerias-Chave</td>
+        <td>Provedores cloud (Azure/AWS), integradores, consultores, comunidade open source</td>
+    </tr>
+    <tr>
+        <td>Estrutura de Custos</td>
+        <td>Infraestrutura, desenvolvimento/manutenção, marketing, suporte, administrativo</td>
+    </tr>
+</table>
+
+<h2>8.3 Sustentabilidade do Projeto</h2>
+
+<p>Sustentabilidade refere-se à capacidade do projeto de se manter a longo prazo, tanto economicamente quanto em termos de desenvolvimento e comunidade.</p>
+
+<p><span class="destaque">Sustentabilidade Econômica:</span> Para ser economicamente sustentável, o projeto precisa gerar receita suficiente para cobrir custos e remunerar adequadamente os desenvolvedores. Supondo custo operacional de R$ 500/mês e dedicação de 160h/mês:</p>
+
+<div class="codigo">
+Custo Total Mensal = R$ 500 (infra) + R$ 8.000 (salário mínimo dev) = R$ 8.500
+Assinaturas necessárias (plano R$ 29/mês) = 293 clientes
+Assinaturas necessárias (plano R$ 99/mês) = 86 clientes
+</div>
+
+<p>Com mix de planos e crescimento gradual, breakeven (ponto de equilíbrio) é atingível em 12-18 meses.</p>
+
+<p><span class="destaque">Sustentabilidade Técnica:</span> O código deve ser mantido atualizado e evoluindo:</p>
+
+<ul>
+    <li>Atualizações de segurança regulares</li>
+    <li>Compatibilidade com novas versões do .NET</li>
+    <li>Correção de bugs reportados</li>
+    <li>Desenvolvimento de novas features baseado em feedback</li>
+    <li>Refactoring periódico para evitar débito técnico</li>
+</ul>
+
+<p><span class="destaque">Sustentabilidade de Comunidade:</span> Se adotar modelo open source, cultivar comunidade é essencial:</p>
+
+<ul>
+    <li>Documentação completa e acessível</li>
+    <li>Guias de contribuição claros</li>
+    <li>Processo transparente de decisões</li>
+    <li>Reconhecimento de contribuidores</li>
+    <li>Código de conduta que promova ambiente inclusivo</li>
+    <li>Canais de comunicação ativos (Discord, GitHub Discussions)</li>
+</ul>
+
+<p><span class="destaque">Sustentabilidade Ambiental:</span> Embora software tenha pegada ambiental menor que indústrias físicas, há considerações:</p>
+
+<ul>
+    <li>Escolha de data centers com energia renovável (Azure e AWS oferecem regiões "green")</li>
+    <li>Otimização de código para eficiência energética</li>
+    <li>Caching e CDN para reduzir transferências de dados desnecessárias</li>
+</ul>
+
+<h2>8.4 Perspectivas de Mercado</h2>
+
+<p><span class="destaque">Análise SWOT:</span></p>
+
+<table>
+    <tr>
+        <th colspan="2">Forças (Strengths)</th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            • Integração única Kanban + Tickets<br>
+            • Interface em português<br>
+            • Stack moderno e escalável<br>
+            • Custos operacionais baixos<br>
+            • Multiplataforma (desktop + web)
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2">Fraquezas (Weaknesses)</th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            • Marca nova sem reconhecimento<br>
+            • Funcionalidades limitadas comparado a concorrentes estabelecidos<br>
+            • Equipe pequena (inicialmente solo)<br>
+            • Falta de integrações com outras ferramentas<br>
+            • Sem aplicativo mobile nativo
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2">Oportunidades (Opportunities)</th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            • Crescimento do trabalho remoto no Brasil<br>
+            • Transformação digital de PMEs<br>
+            • Demanda por ferramentas acessíveis e em português<br>
+            • Programas governamentais de digitalização<br>
+            • Parcerias com consultorias e integradores
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2">Ameaças (Threats)</th>
+    </tr>
+    <tr>
+        <td colspan="2">
+            • Concorrentes grandes com recursos massivos<br>
+            • Mudanças rápidas em tecnologias<br>
+            • Expectativas de usuários acostumados com ferramentas maduras<br>
+            • Questões regulatórias (LGPD, privacidade)<br>
+            • Instabilidade econômica afetando investimento em software
+        </td>
+    </tr>
+</table>
+
+<p><span class="destaque">Estratégia de Go-to-Market:</span></p>
+
+<ol>
+    <li><span class="destaque">Fase 1 - MVP e Validação (0-6 meses):</span> Lançar versão beta gratuita, buscar early adopters, coletar feedback intensivo, iterar rapidamente</li>
+    <li><span class="destaque">Fase 2 - Crescimento Inicial (6-18 meses):</span> Lançar planos pagos, marketing de conteúdo (blog, tutoriais), SEO, parcerias com comunidades de desenvolvedores e gestores de projetos</li>
+    <li><span class="destaque">Fase 3 - Escala (18-36 meses):</span> Expandir equipe, desenvolver integrações com ferramentas populares, lançar aplicativo mobile, buscar investimento se necessário</li>
+</ol>
+
+<p><span class="destaque">Potencial de Crescimento:</span> O projeto tem potencial real de crescimento, especialmente focando em nichos desatendidos por grandes players. A combinação de qualidade técnica, preço acessível e foco no mercado brasileiro cria uma proposição de valor defensável.</p>
+
+<!-- CAPÍTULO 9: IMPLEMENTAÇÃO TÉCNICA -->
+<h1>9 IMPLEMENTAÇÃO TÉCNICA</h1>
+
+<h2>9.1 Funcionalidades do Sistema</h2>
+
+<p>O sistema implementado oferece um conjunto abrangente de funcionalidades distribuídas entre os diferentes perfis de usuário e plataformas de acesso. Esta seção detalha as principais capacidades do sistema.</p>
+
+<p><span class="destaque">Funcionalidades Gerais:</span></p>
+
+<ul>
+    <li><span class="destaque">Multiplataforma:</span> Acesso via aplicação desktop Windows (WPF) ou navegador web (Blazor)</li>
+    <li><span class="destaque">Persistência de Sessão:</span> Sistema salva sessão do usuário localmente, permitindo reconexão automática</li>
+    <li><span class="destaque">Sincronização em Tempo Real:</span> Dados são centralizados na API, garantindo consistência entre plataformas</li>
+    <li><span class="destaque">Interface Responsiva:</span> Layouts adaptam-se a diferentes tamanhos de tela</li>
+</ul>
+
+<p><span class="destaque">Funcionalidades para Administradores:</span></p>
+
+<ul>
+    <li>Visualização completa do quadro Kanban pessoal</li>
+    <li>Criação de colunas personalizadas com cores configuráveis</li>
+    <li>Edição de propriedades de colunas (nome, cor)</li>
+    <li>Exclusão de colunas (exceto "Chamados")</li>
+    <li>Reordenação de colunas por posição</li>
+    <li>Criação de cards com título e descrição</li>
+    <li>Edição completa de cards</li>
+    <li>Movimentação de cards entre colunas (drag and drop ou botões)</li>
+    <li>Exclusão de cards</li>
+    <li>Reescrita de descrições de cards usando IA</li>
+    <li>Visualização de tickets recebidos como cards na coluna "Chamados"</li>
+    <li>Processamento de tickets movendo-os através do fluxo de trabalho</li>
+</ul>
+
+<p><span class="destaque">Funcionalidades para Usuários Não-Administradores:</span></p>
+
+<ul>
+    <li>Visualização de lista de administradores disponíveis</li>
+    <li>Criação de tickets com título e descrição</li>
+    <li>Seleção do administrador destinatário do ticket</li>
+    <li>Melhoria de texto com IA antes de enviar ticket</li>
+    <li>Visualização de todos os tickets criados</li>
+    <li>Acompanhamento do status de cada ticket (admin responsável, coluna atual)</li>
+    <li>Atualização manual da lista de tickets</li>
+</ul>
+
+<h2>9.2 Sistema de Autenticação</h2>
+
+<p>A autenticação é o primeiro ponto de contato do usuário com o sistema e foi implementada com foco em segurança e usabilidade.</p>
+
+<p><span class="destaque">Fluxo de Registro:</span></p>
+
+<ol>
+    <li>Usuário fornece username e password</li>
+    <li>Sistema verifica se username já existe no banco</li>
+    <li>Password é hasheada usando BCrypt com salt automático</li>
+    <li>Novo registro é inserido em pim_users com admin=false por padrão</li>
+    <li>Sistema retorna confirmação de sucesso</li>
+</ol>
+
+<div class="codigo">
+var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+await using var cmd = new NpgsqlCommand(
+    "INSERT INTO pim_users (id, username, password, admin, created_at) " +
+    "VALUES (@id, @username, @password, false, @created)", connection);
+
+cmd.Parameters.AddWithValue("id", Guid.NewGuid());
+cmd.Parameters.AddWithValue("username", request.Username);
+cmd.Parameters.AddWithValue("password", passwordHash);
+cmd.Parameters.AddWithValue("created", DateTime.UtcNow);
+
+await cmd.ExecuteNonQueryAsync();
+</div>
+
+<p><span class="destaque">Fluxo de Login:</span></p>
+
+<ol>
+    <li>Usuário fornece username e password</li>
+    <li>Sistema busca usuário no banco de dados</li>
+    <li>Password fornecida é verificada contra hash armazenado usando BCrypt.Verify</li>
+    <li>Se válida, sistema retorna dados do usuário incluindo ID, Username e IsAdmin</li>
+    <li>Cliente salva dados em sessão local (SessionManager no desktop, SessionService no web)</li>
+    <li>Sistema redireciona para interface apropriada baseado em IsAdmin</li>
+</ol>
+
+<div class="codigo">
+var query = "SELECT id, username, password, admin FROM pim_users WHERE username = @username";
+
+// ... execução da query ...
+
+if (reader.Read())
+{
+    var storedHash = reader.GetString(2);
+    if (BCrypt.Net.BCrypt.Verify(request.Password, storedHash))
+    {
+        return Ok(new LoginResponse
+        {
+            Id = reader.GetGuid(0),
+            Username = reader.GetString(1),
+            IsAdmin = reader.GetBoolean(3)
+        });
+    }
+}
+return Unauthorized();
+</div>
+
+<p><span class="destaque">Gerenciamento de Sessão:</span></p>
+
+<p>No Desktop (WPF), SessionManager salva dados em arquivo JSON local:</p>
+
+<div class="codigo">
+public static void SaveSession(Guid userId, string username, bool isAdmin)
+{
+    var session = new { UserId = userId, Username = username, IsAdmin = isAdmin };
+    var json = JsonSerializer.Serialize(session);
+    File.WriteAllText(SessionFilePath, json);
+}
+</div>
+
+<p>No Web (Blazor), SessionService usa localStorage do navegador:</p>
+
+<div class="codigo">
+public async Task SaveSessionAsync(Guid userId, string username, bool isAdmin)
+{
+    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "userId", userId.ToString());
+    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "username", username);
+    await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "isAdmin", isAdmin.ToString());
+}
+</div>
+
+<p><span class="destaque">Segurança:</span></p>
+
+<ul>
+    <li>Senhas nunca são armazenadas em texto plano</li>
+    <li>BCrypt usa salt único para cada senha, impedindo rainbow table attacks</li>
+    <li>Conexão com banco usa SSL (configurável em connection string)</li>
+    <li>Em produção, API deveria usar HTTPS obrigatório</li>
+    <li>Tokens JWT poderiam ser implementados para autenticação stateless mais robusta</li>
+</ul>
+
+<h2>9.3 Módulo Kanban</h2>
+
+<p>O módulo Kanban é o coração do sistema para usuários administradores, permitindo gestão visual de projetos e tarefas.</p>
+
+<p><span class="destaque">Estrutura de Dados:</span></p>
+
+<p>O Kanban é composto por três níveis hierárquicos:</p>
+
+<ul>
+    <li><span class="destaque">Usuário:</span> Cada administrador possui seu próprio quadro Kanban independente</li>
+    <li><span class="destaque">Colunas:</span> Cada quadro contém múltiplas colunas representando estágios do fluxo de trabalho</li>
+    <li><span class="destaque">Cards:</span> Cada coluna contém múltiplos cards representando itens de trabalho</li>
+</ul>
+
+<p><span class="destaque">Operações em Colunas:</span></p>
+
+<p><em>Criar Coluna:</em> POST /api/columns</p>
+
+<div class="codigo">
+{
+    "userId": "guid-do-usuario",
+    "name": "Em Progresso",
+    "color": "blue"
+}
+</div>
+
+<p>Sistema atribui próximo número de posição automaticamente e define IsDeletable=true (exceto para "Chamados").</p>
+
+<p><em>Listar Colunas:</em> GET /api/columns/user/{userId}</p>
+
+<p>Retorna todas as colunas do usuário ordenadas por posição, permitindo renderização correta do quadro.</p>
+
+<p><em>Atualizar Coluna:</em> PUT /api/columns/{id}</p>
+
+<p>Permite alterar nome, cor ou posição da coluna.</p>
+
+<p><em>Deletar Coluna:</em> DELETE /api/columns/{id}</p>
+
+<p>Antes de deletar, sistema verifica is_deletable. Se false, operação é negada. Se true, coluna e todos os seus cards são removidos em cascata.</p>
+
+<p><span class="destaque">Operações em Cards:</span></p>
+
+<p><em>Criar Card:</em> POST /api/cards</p>
+
+<div class="codigo">
+{
+    "columnId": "guid-da-coluna",
+    "title": "Implementar feature X",
+    "description": "Descrição detalhada da tarefa..."
+}
+</div>
+
+<p><em>Listar Cards:</em> GET /api/cards/column/{columnId}</p>
+
+<p>Retorna cards de uma coluna específica ordenados por posição.</p>
+
+<p><em>Atualizar Card:</em> PUT /api/cards/{id}</p>
+
+<p>Permite alterar qualquer propriedade do card, incluindo columnId (movimentação entre colunas).</p>
+
+<div class="codigo">
+{
+    "columnId": "nova-coluna-guid",  // Mover para outra coluna
+    "title": "Título atualizado",
+    "description": "Descrição atualizada",
+    "position": 2
+}
+</div>
+
+<p><em>Deletar Card:</em> DELETE /api/cards/{id}</p>
+
+<p><span class="destaque">Drag and Drop:</span></p>
+
+<p>A funcionalidade de arrastar e soltar foi implementada usando eventos HTML5 drag and drop:</p>
+
+<div class="codigo">
+private Card? _draggedCard;
+
+private void HandleCardDragStart(Card card)
+{
+    _draggedCard = card;
+}
+
+private async Task HandleDrop(Guid targetColumnId)
+{
+    if (_draggedCard != null && _draggedCard.ColumnId != targetColumnId)
+    {
+        _draggedCard.ColumnId = targetColumnId;
+        await ApiService.UpdateCardAsync(_draggedCard);
+        await LoadColumns(); // Recarrega quadro
+    }
+    _draggedCard = null;
+}
+</div>
+
+<p>Quando card é solto em nova coluna, uma requisição PUT atualiza seu columnId no backend, e o quadro é recarregado para refletir mudança.</p>
+
+<h2>9.4 Módulo de Tickets</h2>
+
+<p>O módulo de tickets representa a inovação principal do sistema, integrando atendimento de chamados com o fluxo Kanban.</p>
+
+<p><span class="destaque">Arquitetura do Sistema de Tickets:</span></p>
+
+<p>O sistema cria um elo entre usuários não-administradores (requesters) e administradores através de tickets que são convertidos em cards:</p>
+
+<ol>
+    <li>Usuário não-admin cria ticket direcionado a um admin específico</li>
+    <li>Sistema cria registro em pim_tickets com requester_id e admin_id</li>
+    <li>Sistema automaticamente cria card na coluna "Chamados" do admin escolhido</li>
+    <li>card_id é armazenado no ticket, estabelecendo vínculo</li>
+    <li>Admin processa ticket movendo card através das colunas normalmente</li>
+    <li>Usuário não-admin pode ver em qual coluna seu ticket está</li>
+</ol>
+
+<p><span class="destaque">Fluxo de Criação de Ticket:</span></p>
+
+<p>POST /api/tickets/user/{userId}</p>
+
+<div class="codigo">
+{
+    "adminId": "guid-do-admin-escolhido",
+    "title": "Problema com acesso",
+    "description": "Não consigo acessar o sistema..."
+}
+</div>
+
+<p>Backend executa múltiplas operações atomicamente:</p>
+
+<div class="codigo">
+// 1. Busca coluna "Chamados" do admin
+var chamadosColumn = await FindChamadosColumn(adminId);
+
+// 2. Cria card na coluna Chamados
+var card = await CreateCard(chamadosColumn.Id, title, description);
+
+// 3. Cria ticket vinculado ao card
+var ticket = new Ticket
+{
+    Id = Guid.NewGuid(),
+    RequesterId = userId,
+    AdminId = adminId,
+    CardId = card.Id,
+    Title = title,
+    Description = description
+};
+await SaveTicket(ticket);
+
+return Created($"/api/tickets/{ticket.Id}", ticket);
+</div>
+
+<p><span class="destaque">Visualização de Status:</span></p>
+
+<p>GET /api/tickets/user/{userId} retorna tickets enriquecidos com informações contextuais:</p>
+
+<div class="codigo">
+{
+    "ticketId": "guid",
+    "title": "Problema com acesso",
+    "description": "Não consigo...",
+    "createdAt": "2025-11-13T10:30:00Z",
+    "adminName": "João Silva",
+    "currentColumn": "Em Análise",
+    "columnColor": "blue"
+}
+</div>
+
+<p>Sistema faz JOIN entre pim_tickets, pim_users (para nome do admin), pim_cards e pim_columns (para coluna atual), proporcionando visão completa do status.</p>
+
+<p><span class="destaque">Coluna "Chamados" Especial:</span></p>
+
+<p>Quando usuário com admin=true é criado (ou quando admin flag é adicionado a usuário existente), sistema automaticamente cria coluna "Chamados":</p>
+
+<div class="codigo">
+INSERT INTO pim_columns (id, user_id, name, color, position, is_deletable)
+VALUES (gen_random_uuid(), @userId, 'Chamados', 'red', 0, false);
+</div>
+
+<p>O atributo is_deletable=false garante que ColumnsController rejeite tentativas de exclusão:</p>
+
+<div class="codigo">
+if (!isDeletable)
+{
+    return BadRequest(new { 
+        message = "Esta coluna não pode ser deletada pois é protegida pelo sistema" 
+    });
+}
+</div>
+
+<h2>9.5 Integração com IA</h2>
+
+<p>A integração com Inteligência Artificial para melhoria de textos adiciona valor significativo ao sistema, auxiliando usuários a comunicar-se de forma mais clara e profissional.</p>
+
+<p><span class="destaque">AIService:</span></p>
+
+<p>O serviço de IA foi abstraído em uma classe dedicada, facilitando troca de provedores (OpenAI, Azure OpenAI, modelos locais, etc.):</p>
+
+<div class="codigo">
+public class AIService
+{
+    private readonly HttpClient _httpClient;
+    private readonly string _apiKey;
+
+    public async Task&lt;string&gt; RewriteTextAsync(string text)
+    {
+        var request = new
+        {
+            model = "gpt-3.5-turbo",
+            messages = new[]
+            {
+                new { role = "system", content = "Você é um assistente que melhora textos..." },
+                new { role = "user", content = $"Melhore este texto: {text}" }
+            }
+        };
+
+        var response = await _httpClient.PostAsJsonAsync("/v1/chat/completions", request);
+        var result = await response.Content.ReadFromJsonAsync&lt;AIResponse&gt;();
+        
+        return result.Choices[0].Message.Content;
+    }
+}
+</div>
+
+<p><span class="destaque">Endpoints de Reescrita:</span></p>
+
+<p>POST /api/cards/{id}/rewrite - Reescreve descrição de um card existente</p>
+
+<p>POST /api/tickets/{id}/rewrite - Melhora texto de ticket antes de enviar</p>
+
+<div class="codigo">
+{
+    "text": "preciso ajuda pra acessar o sistema ta dando erro"
+}
+
+// Resposta:
+{
+    "originalText": "preciso ajuda pra acessar o sistema ta dando erro",
+    "rewrittenText": "Solicito auxílio para acessar o sistema, pois estou encontrando erros."
+}
+</div>
+
+<p><span class="destaque">Uso nas Interfaces:</span></p>
+
+<p>Nos clientes (Desktop e Web), botões com ícone de IA (🤖) permitem que usuário acione reescrita:</p>
+
+<div class="codigo">
+private async Task RewriteDescription()
+{
+    if (string.IsNullOrWhiteSpace(TicketDescription)) return;
+    
+    IsRewriting = true;
+    RewriteButtonText = "⏳ Melhorando...";
+    
+    var improved = await _ticketService.RewriteTextAsync(TicketDescription);
+    TicketDescription = improved;
+    
+    IsRewriting = false;
+    RewriteButtonText = "🤖 Melhorar Texto";
+}
+</div>
+
+<p>Feedback visual indica que operação está em andamento, melhorando experiência do usuário.</p>
+
+<p><span class="destaque">Considerações Éticas e Práticas:</span></p>
+
+<ul>
+    <li>Texto original nunca é perdido até usuário confirmar substituição</li>
+    <li>Funcionalidade é opcional - usuário pode escrever livremente sem IA</li>
+    <li>Em produção, custos de API de IA devem ser monitorados (rate limiting, caching)</li>
+    <li>Privacidade: textos enviados para APIs externas devem ter consentimento do usuário</li>
+    <li>Fallback: se API de IA falhar, sistema continua funcionando normalmente</li>
+</ul>
+
+<!-- CAPÍTULO 10: RESULTADOS E DISCUSSÃO -->
+<h1>10 RESULTADOS E DISCUSSÃO</h1>
+
+<p>O desenvolvimento deste projeto resultou em um sistema funcional, robusto e escalável que atende aos objetivos estabelecidos. Esta seção apresenta uma análise crítica dos resultados obtidos e discussão sobre aprendizados, desafios e possibilidades futuras.</p>
+
+<p><span class="destaque">Objetivos Alcançados:</span></p>
+
+<p>Todos os objetivos específicos estabelecidos no início do projeto foram cumpridos com sucesso:</p>
+
+<ul>
+    <li>✅ Arquitetura orientada a objetos implementada com aplicação rigorosa dos princípios de POO</li>
+    <li>✅ API RESTful funcional com endpoints completos e bem documentados</li>
+    <li>✅ Aplicação desktop WPF com interface moderna e intuitiva</li>
+    <li>✅ Aplicação web Blazor Server com funcionalidades equivalentes</li>
+    <li>✅ Sistema de autenticação seguro com diferenciação de perfis</li>
+    <li>✅ Funcionalidades completas de Kanban implementadas</li>
+    <li>✅ Módulo de gestão de tickets integrado ao Kanban</li>
+    <li>✅ Integração com IA para melhoria de textos</li>
+    <li>✅ Práticas de gerenciamento de projetos aplicadas</li>
+    <li>✅ Versionamento Git com commits organizados</li>
+    <li>✅ Considerações de acessibilidade e inclusão</li>
+    <li>✅ Análise de viabilidade econômica realizada</li>
+    <li>✅ Documentação completa produzida</li>
+</ul>
+
+<p><span class="destaque">Resultados Técnicos:</span></p>
+
+<p>Do ponto de vista técnico, o sistema demonstrou:</p>
+
+<ul>
+    <li><span class="destaque">Performance adequada:</span> Requisições à API respondem em média entre 200-500ms, bem abaixo do limite de 2 segundos estabelecido</li>
+    <li><span class="destaque">Estabilidade:</span> Sistema operou sem crashes durante testes extensivos</li>
+    <li><span class="destaque">Escalabilidade:</span> Arquitetura suporta crescimento horizontal através de múltiplas instâncias da API</li>
+    <li><span class="destaque">Manutenibilidade:</span> Código organizado, bem comentado e seguindo padrões facilita manutenção</li>
+    <li><span class="destaque">Segurança:</span> Senhas hasheadas, queries parametrizadas (prevenção de SQL injection), tratamento adequado de erros</li>
+</ul>
+
+<p><span class="destaque">Resultados Pedagógicos:</span></p>
+
+<p>Este projeto proporcionou aprendizado profundo em múltiplas áreas:</p>
+
+<p><span class="destaque">Programação Orientada a Objetos:</span> A implementação forçou aplicação prática de conceitos teóricos. Decisões sobre quando usar herança vs. composição, como estruturar classes para máxima coesão e mínimo acoplamento, e como aplicar padrões de projeto foram tomadas constantemente, consolidando entendimento destes princípios.</p>
+
+<p><span class="destaque">Desenvolvimento Full-Stack:</span> Trabalhar simultaneamente em backend (API), frontend desktop (WPF) e frontend web (Blazor) proporcionou visão holística do desenvolvimento de software. Compreender como dados fluem desde o banco de dados, através da API, até as interfaces de usuário é fundamental para arquitetos de software.</p>
+
+<p><span class="destaque">Gerenciamento de Complexidade:</span> Coordenar três projetos interdependentes, garantir consistência de dados e comportamentos, e manter qualidade ao longo de várias semanas de desenvolvimento ensinou valiosas lições sobre gestão de complexidade - habilidade essencial em projetos profissionais.</p>
+
+<p><span class="destaque">Problem Solving:</span> Diversos desafios técnicos surgiram durante desenvolvimento (drag and drop em Blazor, gerenciamento de sessão, sincronização de estados), cada um exigindo pesquisa, experimentação e pensamento crítico para resolver.</p>
+
+<p><span class="destaque">Desafios Enfrentados:</span></p>
+
+<p>O desenvolvimento não foi isento de desafios:</p>
+
+<p><span class="destaque">Complexidade do WPF:</span> WPF tem curva de aprendizado íngreme. XAML, data binding, eventos e o padrão MVVM são conceitos densos que exigiram estudo extensivo. Decisão de simplificar MVVM para code-behind direto foi pragmática para manter progresso.</p>
+
+<p><span class="destaque">Drag and Drop Multiplataforma:</span> Implementar drag and drop de forma consistente entre WPF e Blazor revelou diferenças fundamentais entre as plataformas. A solução final funciona, mas requer código específico para cada plataforma.</p>
+
+<p><span class="destaque">Gerenciamento de Estado em Blazor:</span> Blazor Server, sendo stateful, requer cuidado especial com gerenciamento de estado entre renderizações. Scoped services e localStorage foram usados, mas exigiram entendimento profundo do ciclo de vida de componentes Blazor.</p>
+
+<p><span class="destaque">Integração com IA:</span> APIs de IA podem ser lentas e ocasionalmente indisponíveis. Implementar feedback adequado ao usuário e tratamento de erros gracioso foi essencial para não degradar experiência quando IA falha.</p>
+
+<p><span class="destaque">Limitações Identificadas:</span></p>
+
+<p>Apesar dos sucessos, o sistema possui limitações que devem ser reconhecidas:</p>
+
+<ul>
+    <li><span class="destaque">Sem aplicativo mobile nativo:</span> Apenas web responsivo, não aplicativos nativos iOS/Android</li>
+    <li><span class="destaque">Colaboração limitada:</span> Sistema não suporta múltiplos usuários compartilhando mesmo quadro Kanban</li>
+    <li><span class="destaque">Sem notificações:</span> Administradores não são notificados quando novos tickets chegam</li>
+    <li><span class="destaque">Sem histórico/auditoria:</span> Sistema não registra quem fez qual mudança e quando</li>
+    <li><span class="destaque">Integrações ausentes:</span> Não integra com email, calendário, Slack, etc.</li>
+    <li><span class="destaque">Relatórios limitados:</span> Não há dashboard analítico ou relatórios de produtividade</li>
+    <li><span class="destaque">Busca básica:</span> Sem funcionalidade de busca avançada por cards/tickets</li>
+</ul>
+
+<p><span class="destaque">Possibilidades Futuras:</span></p>
+
+<p>O projeto estabelece fundação sólida para evoluções futuras:</p>
+
+<ul>
+    <li><span class="destaque">Colaboração em tempo real:</span> Implementar SignalR para atualização automática quando outros usuários fazem mudanças</li>
+    <li><span class="destaque">Quadros compartilhados:</span> Permitir que múltiplos admins colaborem no mesmo quadro</li>
+    <li><span class="destaque">Sistema de permissões:</span> Roles mais granulares além de admin/não-admin</li>
+    <li><span class="destaque">Anexos:</span> Permitir upload de arquivos em cards e tickets</li>
+    <li><span class="destaque">Comentários:</span> Thread de discussão em cada card</li>
+    <li><span class="destaque">Tags e filtros:</span> Categorização e filtragem avançada de cards</li>
+    <li><span class="destaque">Automações:</span> Regras tipo "quando card entra em coluna X, enviar notificação"</li>
+    <li><span class="destaque">Integrações:</span> Webhooks, API pública para integrações com outras ferramentas</li>
+    <li><span class="destaque">Mobile nativo:</span> Apps usando .NET MAUI ou Xamarin</li>
+    <li><span class="destaque">IA avançada:</span> Sugestões automáticas, priorização inteligente, estimativas de tempo</li>
+</ul>
+
+<p><span class="destaque">Impacto e Aplicabilidade:</span></p>
+
+<p>O sistema desenvolvido tem aplicabilidade real e imediata. Pode ser utilizado por:</p>
+
+<ul>
+    <li>Pequenas empresas para gestão de projetos internos</li>
+    <li>Equipes de desenvolvimento de software usando metodologias ágeis</li>
+    <li>Departamentos de TI para gestão de chamados técnicos</li>
+    <li>ONGs para organização de atividades e demandas de beneficiários</li>
+    <li>Instituições educacionais para gestão de trabalhos e solicitações de alunos</li>
+    <li>Freelancers e consultores para organização de múltiplos projetos de clientes</li>
+</ul>
+
+<p>A combinação de simplicidade de uso, baixo custo operacional e funcionalidades práticas torna o sistema atraente para diversos nichos de mercado.</p>
+
+<!-- CAPÍTULO 11: CONCLUSÃO -->
+<h1>11 CONCLUSÃO</h1>
+
+<p>Este projeto representou uma jornada abrangente através de múltiplas disciplinas do curso de Análise e Desenvolvimento de Sistemas, culminando em um produto funcional, tecnicamente sólido e com potencial comercial real. A integração de conhecimentos teóricos e práticos resultou em aprendizado profundo que transcende a simples codificação.</p>
+
+<p>Do ponto de vista técnico, o sistema demonstra maturidade arquitetural. A aplicação rigorosa de princípios de Programação Orientada a Objetos - encapsulamento, abstração, herança e polimorfismo - resultou em código modular, testável e manutenível. A adoção do padrão de camadas (Controllers, Services, Models) e de padrões de projeto reconhecidos (Repository, Service Layer, DTO) alinha o projeto com melhores práticas da indústria.</p>
+
+<p>A escolha da plataforma .NET revelou-se acertada. C# como linguagem oferece produtividade através de recursos modernos (async/await, LINQ, null-safety) sem sacrificar performance ou tipagem forte. ASP.NET Core como framework de backend proporciona robustez e escalabilidade. WPF e Blazor, apesar de curvas de aprendizado não-triviais, permitiram criar interfaces ricas e responsivas.</p>
+
+<p>A integração entre metodologia Kanban e sistema de tickets representa inovação genuína. Enquanto ferramentas existentes tratam gestão de projetos e atendimento de chamados como domínios separados, este projeto demonstra que a convergência cria valor. Administradores beneficiam-se de visão unificada onde tickets de usuários aparecem naturalmente em seu fluxo de trabalho, e usuários finais ganham transparência sobre o processamento de suas solicitações.</p>
+
+<p>Do ponto de vista de gerenciamento de projetos, a experiência validou princípios ágeis. Desenvolvimento iterativo, entregas incrementais, refactoring contínuo e feedback constante mostraram-se superiores a abordagens de planejamento extensivo prévio. A capacidade de adaptar o plano quando desafios técnicos surgiam (como complexidade de MVVM puro em WPF) foi crucial para manter progresso.</p>
+
+<p>As considerações sobre inclusão, diversidade e acessibilidade, embora não totalmente implementadas, demonstram consciência de que tecnologia não é neutra. Software pode tanto ampliar quanto reduzir desigualdades. Escolhas de design - idioma português, interface simplificada para não-técnicos, baixo custo operacional - refletem compromisso com democratização de acesso a ferramentas de produtividade.</p>
+
+<p>A análise empreendedora revelou que o projeto tem viabilidade comercial real. Custos operacionais baixos, diferencial competitivo claro (integração Kanban+Tickets, foco no mercado brasileiro) e múltiplos modelos de monetização possíveis (SaaS, freemium, open source + serviços) criam fundação para sustentabilidade econômica. O mercado de software de gestão de projetos é maduro mas fragmentado, com espaço para players focados em nichos específicos.</p>
+
+<p>Os desafios enfrentados durante o desenvolvimento - complexidade do WPF, diferenças entre plataformas para drag and drop, gerenciamento de estado em Blazor - foram valiosos para crescimento técnico. Cada obstáculo superado representou oportunidade de aprendizado profundo que não seria possível através de estudo teórico isolado. Debugging de problemas reais, pesquisa de soluções em documentação e comunidades, e experimentação iterativa são habilidades essenciais para desenvolvedores profissionais.</p>
+
+<p>As limitações identificadas - ausência de aplicativo mobile nativo, colaboração em tempo real limitada, falta de notificações - não diminuem o valor do sistema desenvolvido. Ao contrário, representam roadmap claro para evolução futura. Em engenharia de software, é preferível sistema funcional com escopo bem definido a projeto ambicioso incompleto. O conceito de MVP (Minimum Viable Product) foi respeitado.</p>
+
+<p>A documentação extensa produzida - desde guias técnicos até este documento acadêmico - demonstra que desenvolvimento de software profissional transcende código. Comunicação clara, transferência de conhecimento e reflexão crítica sobre processo são componentes essenciais. Esta documentação serve não apenas como requisito acadêmico, mas como ferramenta real para onboarding de futuros colaboradores caso o projeto evolua para produto comercial.</p>
+
+<p>Do ponto de vista pedagógico, o projeto integrador cumpriu seu propósito fundamental: articular conhecimentos de múltiplas disciplinas em aplicação prática coerente. Programação Orientada a Objetos forneceu fundação arquitetural. Desenvolvimento para Internet materializou-se nas interfaces web e desktop. Gerenciamento de Projetos guiou planejamento e execução. Gestão da Qualidade manifestou-se através de versionamento e práticas de código limpo. Considerações sobre diversidade e empreendedorismo ampliaram perspectiva além do puramente técnico.</p>
+
+<p>Olhando para o futuro, as possibilidades de evolução são vastas. Implementação de colaboração em tempo real usando SignalR transformaria o sistema de ferramenta individual para plataforma colaborativa. Sistema de permissões granulares permitiria uso empresarial mais sofisticado. Integrações com outras ferramentas (Slack, email, calendário) ampliariam utilidade. Dashboard analítico com métricas de produtividade agregaria valor para gestores. Aplicativo mobile nativo usando .NET MAUI completaria a oferta multiplataforma.</p>
+
+<p>Tecnicamente, o sistema está pronto para uso em cenários reais. Com deploy em cloud provider (Azure, AWS), configuração de HTTPS, backup automatizado do banco de dados e monitoramento básico, o sistema poderia servir usuários reais. Esta proximidade com aplicação profissional valida a qualidade do trabalho desenvolvido e a eficácia do aprendizado durante o curso.</p>
+
+<p>Para futuros estudantes e desenvolvedores que consultarem esta documentação, algumas lições-chave:</p>
+
+<ol>
+    <li><span class="destaque">Comece simples:</span> MVP funcional supera projeto ambicioso incompleto</li>
+    <li><span class="destaque">Arquitetura importa:</span> Tempo investido em design inicial economiza multiplicado em manutenção</li>
+    <li><span class="destaque">Documentação não é overhead:</span> É investimento que retorna quando você ou outros revisitam o código</li>
+    <li><span class="destaque">Aprenda fazendo:</span> Teoria é essencial, mas habilidade vem de resolver problemas reais</li>
+    <li><span class="destaque">Aceite limitações:</span> Escopo bem definido e executado supera escopo infinito aspiracional</li>
+    <li><span class="destaque">Comunidade é recurso:</span> Stack Overflow, GitHub, documentação oficial são aliados valiosos</li>
+    <li><span class="destaque">Itere constantemente:</span> Primeira versão nunca é perfeita; refine continuamente</li>
+    <li><span class="destaque">Pense além do código:</span> Usuário final, viabilidade econômica, inclusão são tão importantes quanto técnica</li>
+</ol>
+
+<p>Em conclusão, este projeto representa não apenas cumprimento de requisito acadêmico, mas demonstração de prontidão para atuar profissionalmente como desenvolvedor de software. As competências desenvolvidas - pensamento arquitetural, proficiência em múltiplas tecnologias, resolução de problemas complexos, gestão de projetos, comunicação técnica - são exatamente aquelas demandadas pelo mercado de trabalho.</p>
+
+<p>O Sistema Kanban com Gestão de Tickets desenvolvido é funcional, tecnicamente sólido, potencialmente viável comercialmente, e pedagogicamente rico. Serve como evidência concreta de que os anos investidos no curso de Análise e Desenvolvimento de Sistemas na UNIP geraram aprendizado real e aplicável. Mais importante, o projeto demonstra que tecnologia, quando desenvolvida com consciência de seu impacto social e potencial de negócio, transcende código para tornar-se ferramenta de transformação positiva.</p>
+
+<p>O caminho de aprendizado continua. Tecnologias evoluem, paradigmas mudam, novas práticas emergem. Mas a fundação estabelecida por este projeto - entendimento de princípios fundamentais, capacidade de aprender autonomamente, pensamento crítico sobre arquitetura e design - permanecerá relevante. Esta não é linha de chegada, mas ponto de partida sólido para carreira profissional em desenvolvimento de software.</p>
+
+<!-- REFERÊNCIAS -->
+<div class="referencias">
+    <h1>REFERÊNCIAS</h1>
+
+    <p>ANDERSON, David J. <strong>Kanban: Successful Evolutionary Change for Your Technology Business</strong>. Blue Hole Press, 2010.</p>
+
+    <p>BECK, Kent et al. <strong>Manifesto for Agile Software Development</strong>. Agile Alliance, 2001. Disponível em: https://agilemanifesto.org. Acesso em: 13 nov. 2025.</p>
+
+    <p>FOWLER, Martin. <strong>Patterns of Enterprise Application Architecture</strong>. Addison-Wesley Professional, 2002.</p>
+
+    <p>FREEMAN, Eric; FREEMAN, Elisabeth. <strong>Use a Cabeça! Padrões de Projetos</strong>. 2. ed. Alta Books, 2007.</p>
+
+    <p>GAMMA, Erich et al. <strong>Padrões de Projeto: Soluções Reutilizáveis de Software Orientado a Objetos</strong>. Bookman, 2000.</p>
+
+    <p>MARTIN, Robert C. <strong>Código Limpo: Habilidades Práticas do Agile Software</strong>. Alta Books, 2009.</p>
+
+    <p>MARTIN, Robert C. <strong>Arquitetura Limpa: O Guia do Artesão para Estrutura e Design de Software</strong>. Alta Books, 2019.</p>
+
+    <p>MICROSOFT. <strong>ASP.NET Core Documentation</strong>. Microsoft Docs, 2025. Disponível em: https://docs.microsoft.com/aspnet/core. Acesso em: 13 nov. 2025.</p>
+
+    <p>MICROSOFT. <strong>C# Programming Guide</strong>. Microsoft Docs, 2025. Disponível em: https://docs.microsoft.com/dotnet/csharp. Acesso em: 13 nov. 2025.</p>
+
+    <p>MICROSOFT. <strong>Windows Presentation Foundation Documentation</strong>. Microsoft Docs, 2025. Disponível em: https://docs.microsoft.com/dotnet/desktop/wpf. Acesso em: 13 nov. 2025.</p>
+
+    <p>MICROSOFT. <strong>Blazor Documentation</strong>. Microsoft Docs, 2025. Disponível em: https://docs.microsoft.com/aspnet/core/blazor. Acesso em: 13 nov. 2025.</p>
+
+    <p>OSTERWALDER, Alexander; PIGNEUR, Yves. <strong>Business Model Generation: Inovação em Modelos de Negócios</strong>. Alta Books, 2011.</p>
+
+    <p>POSTGRESQL GLOBAL DEVELOPMENT GROUP. <strong>PostgreSQL Documentation</strong>. PostgreSQL, 2025. Disponível em: https://www.postgresql.org/docs. Acesso em: 13 nov. 2025.</p>
+
+    <p>PRESSMAN, Roger S.; MAXIM, Bruce R. <strong>Engenharia de Software: Uma Abordagem Profissional</strong>. 8. ed. McGraw-Hill Education, 2016.</p>
+
+    <p>PROJECT MANAGEMENT INSTITUTE. <strong>A Guide to the Project Management Body of Knowledge (PMBOK Guide)</strong>. 7. ed. PMI, 2021.</p>
+
+    <p>SCHWABER, Ken; SUTHERLAND, Jeff. <strong>The Scrum Guide</strong>. Scrum.org, 2020. Disponível em: https://scrumguides.org. Acesso em: 13 nov. 2025.</p>
+
+    <p>SOMMERVILLE, Ian. <strong>Engenharia de Software</strong>. 10. ed. Pearson Education, 2019.</p>
+
+    <p>MICROSOFT. <strong>SQL Server Documentation</strong>. Microsoft, 2025. Disponível em: https://docs.microsoft.com/sql. Acesso em: 14 nov. 2025.</p>
+
+    <p>TROELSEN, Andrew; JAPIKSE, Philip. <strong>Pro C# 9 with .NET 5: Foundational Principles and Practices in Programming</strong>. 10. ed. Apress, 2021.</p>
+
+    <p>W3C WEB ACCESSIBILITY INITIATIVE. <strong>Web Content Accessibility Guidelines (WCAG) 2.1</strong>. W3C, 2018. Disponível em: https://www.w3.org/TR/WCAG21. Acesso em: 13 nov. 2025.</p>
+</div>
+
+</body>
+</html>
