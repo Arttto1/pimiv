@@ -1,10 +1,10 @@
-# Sistema Kanban# Sistema Kanban# 📋 Sistema Kanban# 📋 Sistema Kanban - Gerenciamento de Tarefas Multiplataforma# Kanban Board - Sistema Completo em C#
+# Sistema Kanban - Gerenciamento de Tarefas Multiplataforma# Kanban Board - Sistema Completo em C#
 
-Sistema de gerenciamento de tarefas com quadro Kanban e sistema de tickets.Sistema de gerenciamento de tarefas com Kanban board e sistema de tickets.
+Sistema de gerenciamento de tarefas com quadro Kanban e sistema de tickets.
 
-## Como Executar## Como ExecutarSistema de gerenciamento de tarefas estilo Kanban com múltiplas interfaces (Web e Desktop) e sistema de tickets.
+## Como Executar
 
-### 1. Configurar o Banco### 1. Configurar o Banco de Dados
+### 1. Configurar o Banco
 
 `powershell`powershell## 🚀 Como Executar![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)Sistema Kanban completo com API REST e dois frontends (Desktop WPF e Web Blazor) integrado com **MS SQL Server**.
 
