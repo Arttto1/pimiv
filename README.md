@@ -1,26 +1,16 @@
 # Sistema Kanban# 📋 Sistema Kanban# 📋 Sistema Kanban - Gerenciamento de Tarefas Multiplataforma# Kanban Board - Sistema Completo em C#
 
-
-
 Sistema de gerenciamento de tarefas com Kanban board e sistema de tickets.
-
-
 
 ## Como ExecutarSistema de gerenciamento de tarefas estilo Kanban com múltiplas interfaces (Web e Desktop) e sistema de tickets.
 
-
-
 ### 1. Configurar o Banco de Dados
-
-
 
 ```powershell## 🚀 Como Executar![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet)Sistema Kanban completo com API REST e dois frontends (Desktop WPF e Web Blazor) integrado com **MS SQL Server**.
 
 .\setup_localdb.ps1
 
 ```
-
-
 
 Ou manualmente:### 1. Configurar o Banco de Dados![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp)
 
@@ -30,7 +20,7 @@ sqlcmd -S "(localdb)\MSSQLLocalDB" -i setup_database.sql
 
 ```
 
-```powershell![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server)**📦 Compatível com .NET 9.0**
+````powershell![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server)**📦 Compatível com .NET 9.0**
 
 ### 2. Rodar a API
 
@@ -42,21 +32,15 @@ cd KanbanAPI```![WPF](https://img.shields.io/badge/WPF-512BD4?style=for-the-badg
 
 dotnet run
 
-```
-
-
+````
 
 A API estará em `http://localhost:5000`Ou manualmente:![Blazor](https://img.shields.io/badge/Blazor-512BD4?style=for-the-badge&logo=blazor)
 
-
-
 ### 3. Rodar o Cliente```powershell
-
-
 
 **Desktop (WPF):**sqlcmd -S "(localdb)\MSSQLLocalDB" -i setup_database.sql## 📋 Estrutura do Projeto
 
-```powershell
+```````powershell
 
 cd KanbanDesktop```
 
@@ -140,15 +124,11 @@ cd KanbanWeb
 
 dotnet run- 🎫 **Sistema de Tickets** para usuários não-admin## 🚀 Funcionalidades
 
-```
+```````
 
 Web disponível em: `http://localhost:5001`- 🖥️ **Interface Desktop** em WPF com tema dark
 
-
-
 ## 🔑 Credenciais- 🌐 **Interface Web** em Blazor Server### ✅ Gerenciamento de Colunas
-
-
 
 - **Admin:** `admin` / `senha123` (acesso ao Kanban)- 👥 **Gestão de usuários** (admin e usuários comuns)- Criar colunas com nome e cor personalizados
 
@@ -180,21 +160,19 @@ Web disponível em: `http://localhost:5001`- 🖥️ **Interface Desktop** em WP
 
 - HttpClientKanbanSystem/- Editar cards existentes
 
-
-
-### KanbanWeb (Frontend)├── 🔌 KanbanAPI          # Backend REST API (.NET 9.0)- Excluir cards
+### KanbanWeb (Frontend)├── 🔌 KanbanAPI # Backend REST API (.NET 9.0)- Excluir cards
 
 - Blazor Server
 
-- Razor Components├── 🖥️ KanbanDesktop      # Cliente Desktop (WPF)- Mover cards entre colunas via drag-drop
+- Razor Components├── 🖥️ KanbanDesktop # Cliente Desktop (WPF)- Mover cards entre colunas via drag-drop
 
 - JavaScript Interop
 
-└── 🌐 KanbanWeb          # Cliente Web (Blazor Server)- Mover cards entre colunas via dropdown no modal
+└── 🌐 KanbanWeb # Cliente Web (Blazor Server)- Mover cards entre colunas via dropdown no modal
 
 ---
 
-```
+````
 
 **Projeto acadêmico - UNIP 2025**
 
@@ -288,13 +266,13 @@ A API estará disponível em: `http://localhost:5000`    "SqlServer": "Server=SE
 
 ### 3️⃣ Executar o Cliente (escolha um)}
 
-```
+````
 
 #### 🖥️ Desktop (WPF)
 
 ### 2. Criar Database
 
-```powershell
+```````powershell
 
 cd KanbanDesktopExecute o script SQL no SQL Server Management Studio (SSMS):
 
@@ -314,13 +292,9 @@ cd KanbanWeb# OU via linha de comando:
 
 dotnet runsqlcmd -S localhost -U sa -P "SUA_SENHA" -i migration_sqlserver.sql
 
-``````
-
-
+```````
 
 Acesse: `http://localhost:5001`### 3. Configurar Endpoint de IA (N8N)
-
-
 
 ## 🔑 Credenciais de TesteO endpoint N8N deve:
 
@@ -334,7 +308,7 @@ Acesse: `http://localhost:5001`### 3. Configurar Endpoint de IA (N8N)
 
 - **Permissões:** Acesso total ao Kanban
 
-```json
+```````json
 
 ### Usuários Comuns{
 
@@ -366,7 +340,7 @@ public class ApiService
 
 ```http    private readonly HttpClient _httpClient;
 
-POST /api/auth/register    # Registrar novo usuário    
+POST /api/auth/register    # Registrar novo usuário
 
 POST /api/auth/login       # Fazer login    public ApiService()
 
@@ -416,7 +390,7 @@ cd pim
 
 ## 🛠️ Tecnologias Utilizadas.\setup.ps1
 
-```
+```````
 
 ### Backend
 
@@ -430,8 +404,6 @@ cd pim
 
 - **Swashbuckle** - Documentação Swagger```
 
-
-
 ### Frontend DesktopCrie um usuário de teste (em outro terminal):
 
 - **WPF (Windows Presentation Foundation)** - Interface desktop
@@ -440,7 +412,7 @@ cd pim
 
 - **HttpClient** - Comunicação com API.\create-user.ps1
 
-```
+```````
 
 ### Frontend Web
 
@@ -624,7 +596,7 @@ sqllocaldb start MSSQLLocalDB
 
 "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=KanbanDB;Trusted_Connection=True;TrustServerCertificate=True;"- `POST /api/cards/{id}/rewrite` - Reescrever descrição com IA
 
-```
+```````
 
 ## 🐛 Logs e Debug
 
@@ -680,11 +652,7 @@ netstat -ano | findstr :5000- `[AUTH]` - Logs de autenticação
 
 ## 📄 Licença- Newtonsoft.Json
 
-
-
 Este projeto é licenciado sob a [MIT License](LICENSE.md).## 💡 Dicas
-
-
 
 ## 🤝 Contribuindo1. **Primeiro Usuário**: Use a rota `/api/auth/register` para criar o primeiro usuário
 
@@ -696,23 +664,19 @@ Contribuições são bem-vindas! Para contribuir:3. **Edição Rápida**: Clique
 
 1. Faça um Fork do projeto5. **Logs**: Monitore o console para debugar problemas
 
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
+1. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
 
-3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)## 🔒 Segurança
+1. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)## 🔒 Segurança
 
-4. Push para a branch (`git push origin feature/MinhaFeature`)
+1. Push para a branch (`git push origin feature/MinhaFeature`)
 
-5. Abra um Pull Request- Senhas são armazenadas com hash BCrypt
+1. Abra um Pull Request- Senhas são armazenadas com hash BCrypt
 
 - Conexão com Supabase via SSL
 
 ## 📞 Suporte- CORS habilitado na API (ajuste em produção)
 
-
-
 Em caso de dúvidas ou problemas:## 🎯 To-Do para Produção
-
-
 
 1. Verifique a [documentação](documentaçao.html)- [ ] Adicionar autenticação JWT na API
 
@@ -728,13 +692,8 @@ Em caso de dúvidas ou problemas:## 🎯 To-Do para Produção
 
 <div align="center">- [ ] Adicionar paginação nos endpoints
 
-
-
 **Desenvolvido com ❤️ usando .NET e C#**---
 
-
-
 ⭐ Se este projeto foi útil, considere dar uma estrela!Desenvolvido para trabalho de faculdade - PIM
-
 
 </div>
